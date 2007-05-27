@@ -1,5 +1,5 @@
 %define version 0.16.1
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define major 8
 %define intllibname %mklibname intl %{major}
@@ -101,6 +101,8 @@ Summary:	Development files for %{name}
 Group:		Development/C
 License:	LGPL
 Requires:	%{name} = %{version}
+# fwang: autopoint requires cvs to work
+Requires:	cvs
 Requires(post): info-install
 Requires(preun): info-install
 
