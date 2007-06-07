@@ -1,5 +1,5 @@
 %define version 0.16.1
-%define release %mkrel 2
+%define release %mkrel 3
 
 %define major 8
 %define intllibname %mklibname intl %{major}
@@ -54,7 +54,7 @@ BuildRequires:	locales-fa
 Requires:	%{name}-base = %{version}
 Requires:	%{misclibname} = %{version}
 # xgettext will dlopen() it when extracting strings from glade files
-Requires:	%mklibname expat 0
+Requires:	%mklibname expat 1
 Requires(post):	info-install
 Requires(preun): info-install
 
@@ -332,5 +332,3 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.dll
 %{_libdir}/gettext/*.exe
 %endif
-
-
