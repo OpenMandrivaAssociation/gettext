@@ -1,5 +1,5 @@
 %define version 0.16.1
-%define release %mkrel 3
+%define release %mkrel 4
 
 %define major 8
 %define intllibname %mklibname intl %{major}
@@ -43,11 +43,12 @@ BuildRequires:	eclipse-ecj
 BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
 %endif
-BuildRequires:  automake1.8
+BuildRequires:  automake
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	emacs-bin
 BuildRequires:	texinfo
+BuildRequires:	devel(libgomp)
 # test suite
 BuildRequires:	locales-fa
 
