@@ -254,7 +254,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/gettext
 %{_datadir}/%{name}/msgunfmt.tcl
 %{_datadir}/%{name}/projects
-%{_datadir}/gettext/javaversion.class
+%{_datadir}/%{name}/javaversion.class
+%{_datadir}/%{name}/styles
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/hostname
 %{_libdir}/%{name}/project-id
@@ -268,6 +269,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/envsubst.*
 %{_mandir}/man1/msg*
 %{_mandir}/man1/xgettext.*
+%{_mandir}/man1/recode-sr-latin.*
 
 %files base -f %{name}.lang
 %defattr(-,root,root)
