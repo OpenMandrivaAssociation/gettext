@@ -25,7 +25,6 @@ URL:		http://www.gnu.org/software/gettext/
 Source:		ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source1:	%{SOURCE0}.sig
 Source2:	po-mode-init.el
-Source3:	gettext-tools-0.14.2.fr.po.bz2
 # (gb) some tests try to link non-pic static libs into a dso (XXX patch as XFAIL?)
 Patch2:		gettext-0.14.6-pic.patch
 # patch to not issue error messages and warnings with some charset encodings
@@ -148,8 +147,6 @@ into C# dll or resource files.
 %patch2 -p1 -b .pic
 %patch5 -p1 -b .more_charsets
 %patch6 -p1 -b .test_suite
-
-bzip2 -dc %{SOURCE3} > gettext-tools/po/fr.po
 
 # (Abel) disable lang-java test, java bytecode failed to run
 sed -i -e 's/lang-java//' gettext-tools/tests/Makefile.in
