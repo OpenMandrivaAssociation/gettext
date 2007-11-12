@@ -244,7 +244,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS htmldoc
+%doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS 
 %config(noreplace) %{_sysconfdir}/emacs/site-start.d/*.el
 %{_bindir}/envsubst
 %{_bindir}/gettext.sh
@@ -293,7 +293,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root)
-%doc gettext-runtime/man/*.3.html examples
+%doc gettext-runtime/man/*.3.html examples htmldoc
 %{_bindir}/autopoint
 %{_bindir}/gettextize
 %{_datadir}/%{name}/ABOUT-NLS
