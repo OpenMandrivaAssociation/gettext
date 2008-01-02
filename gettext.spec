@@ -20,6 +20,7 @@ Version:	%{version}
 Release:	%{release}
 License:	GPL
 Group:		System/Internationalization
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 URL:		http://www.gnu.org/software/gettext/
 Source:		ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source1:	%{SOURCE0}.sig
