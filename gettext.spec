@@ -236,11 +236,19 @@ rm -rf $RPM_BUILD_ROOT
 %preun devel
 %_remove_install_info autosprintf.info
 
+%if %mdkversion < 200900
 %post -n %{intllibname} -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %{intllibname} -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %post -n %{misclibname} -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %{misclibname} -p /sbin/ldconfig
+%endif
 
 %files
 %defattr(-,root,root)
