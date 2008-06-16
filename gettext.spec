@@ -1,5 +1,5 @@
 %define version 0.17
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define major 8
 %define intllibname %mklibname intl %{major}
