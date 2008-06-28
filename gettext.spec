@@ -1,6 +1,3 @@
-%define version 0.17
-%define release %mkrel 2
-
 %define major 8
 %define intllibname %mklibname intl %{major}
 %define misclibname %mklibname gettextmisc
@@ -16,11 +13,10 @@
 
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
-Version:	%{version}
-Release:	%{release}
+Version:	0.17
+Release:	%mkrel 3
 License:	GPL
 Group:		System/Internationalization
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 URL:		http://www.gnu.org/software/gettext/
 Source:		ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source1:	%{SOURCE0}.sig
@@ -32,7 +28,7 @@ Patch2:		gettext-0.14.6-pic.patch
 Patch5:		%{name}-0.14.2-charsets.patch
 # (tv) lang-csharp is broken in testsuite:
 Patch6:		gettext-0.14.6-fix-testsuite.patch
-
+Patch7:		gettext-glibc28.diff
 # (Abel) we pick mono here, though pnet can be used as well.
 %if %enable_csharp
 BuildRequires:	mono
@@ -57,6 +53,7 @@ Requires:	%{misclibname} = %{version}
 Requires:	%mklibname expat 1
 Requires(post):	info-install
 Requires(preun): info-install
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 The GNU gettext package provides a set of tools and documentation for producing
@@ -147,6 +144,7 @@ into C# dll or resource files.
 %patch2 -p1 -b .pic
 %patch5 -p1 -b .more_charsets
 %patch6 -p1 -b .test_suite
+%patch7 -p0
 
 # (Abel) disable lang-java test, java bytecode failed to run
 sed -i -e 's/lang-java//' gettext-tools/tests/Makefile.in
