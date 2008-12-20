@@ -119,6 +119,7 @@ Conflicts: gettext < 0.14.5-3mdk
 This package contains the basic binary from %{name}. It is splitted from
 %{name} because initscript need it to show translated boot messages.
 
+%if %enable_java
 %package	java
 Summary:	Java binding for GNU gettext
 Group:		System/Internationalization
@@ -128,7 +129,9 @@ Requires:	%{name} = %{version}
 This package contains class file that implements the main GNU libintl
 functions in Java. This allows compiling GNU gettext message catalogs
 into Java ResourceBundle classes.
+%endif
 
+%if %enable_csharp
 %package	csharp
 Summary:	C# binding for GNU gettext
 Group:		System/Internationalization
@@ -138,6 +141,7 @@ Requires:	mono
 This package contains class file that implements the main GNU libintl
 functions in C#. This allows compiling GNU gettext message catalogs
 into C# dll or resource files.
+%endif
 
 %prep
 %setup -q
@@ -164,6 +168,9 @@ export JAR="%{_bindir}/fastjar"
 	--enable-csharp=mono \
 %else
 	--disable-csharp \
+%endif
+%if ! %enable_java
+	--disable-java \
 %endif
 
 %make
