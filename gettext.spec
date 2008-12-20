@@ -14,7 +14,7 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.17
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPL
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -29,6 +29,7 @@ Patch5:		%{name}-0.14.2-charsets.patch
 # (tv) lang-csharp is broken in testsuite:
 Patch6:		gettext-0.14.6-fix-testsuite.patch
 Patch7:		gettext-glibc28.diff
+Patch8:		gettext-0.17-format_not_a_string_literal_and_no_format_arguments.diff
 # (Abel) we pick mono here, though pnet can be used as well.
 %if %enable_csharp
 BuildRequires:	mono
@@ -149,6 +150,7 @@ into C# dll or resource files.
 %patch5 -p1 -b .more_charsets
 %patch6 -p1 -b .test_suite
 %patch7 -p0
+%patch8 -p1 -b .format_not_a_string_literal_and_no_format_arguments
 
 # (Abel) disable lang-java test, java bytecode failed to run
 sed -i -e 's/lang-java//' gettext-tools/tests/Makefile.in
