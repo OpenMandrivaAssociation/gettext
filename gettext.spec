@@ -14,7 +14,7 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.17
-Release:	%mkrel 6
+Release:	%mkrel 7
 License:	GPL
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
