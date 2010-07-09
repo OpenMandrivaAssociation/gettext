@@ -13,23 +13,16 @@
 
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
-Version:	0.17
-Release:	%mkrel 9
+Version:	0.18.1.1
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
 Source:		ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source1:	%{SOURCE0}.sig
 Source2:	po-mode-init.el
-# (gb) some tests try to link non-pic static libs into a dso (XXX patch as XFAIL?)
-Patch2:		gettext-0.14.6-pic.patch
-# patch to not issue error messages and warnings with some charset encodings
-# we support in MDK. -- pablo
-Patch5:		%{name}-0.14.2-charsets.patch
-# (tv) lang-csharp is broken in testsuite:
-Patch6:		gettext-0.14.6-fix-testsuite.patch
-Patch7:		gettext-glibc28.diff
-Patch8:		gettext-0.17-format_not_a_string_literal_and_no_format_arguments.diff
+Patch8:		gettext-0.18.1-fix-str-fmt.patch
+Patch9:		gettext-0.18.1.1-linkage.patch
 # (Abel) we pick mono here, though pnet can be used as well.
 %if %enable_csharp
 BuildRequires:	mono
@@ -38,15 +31,24 @@ BuildRequires:	mono
 BuildRequires:	eclipse-ecj
 BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
+BuildRequires:	fastjar
 %endif
 BuildRequires:  automake
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	emacs-bin
 BuildRequires:	texinfo
-BuildRequires:	devel(libgomp)
+BuildRequires:	libgomp-devel
+BuildRequires:	libcroco0.6-devel
+BuildRequires:	libunistring-devel
+BuildRequires:	ncurses-devel
+BuildRequires:	libxml2-devel
+BuildRequires:	acl-devel
 # test suite
 BuildRequires:	locales-fa
+BuildRequires:	locales-fr
+BuildRequires:	locales-ja
+BuildRequires:	locales-zh
 
 Requires:	%{name}-base = %{version}
 Requires:	%{misclibname} = %{version}
@@ -146,14 +148,8 @@ into C# dll or resource files.
 
 %prep
 %setup -q
-%patch2 -p1 -b .pic
-%patch5 -p1 -b .more_charsets
-%patch6 -p1 -b .test_suite
-%patch7 -p0
-%patch8 -p1 -b .format_not_a_string_literal_and_no_format_arguments
-
-# (Abel) disable lang-java test, java bytecode failed to run
-sed -i -e 's/lang-java//' gettext-tools/tests/Makefile.in
+%patch8 -p0 -b .str
+%patch9 -p1 -b .link
 
 %build
 
@@ -163,6 +159,10 @@ export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
 
+autoreconf -fi
+for i in `find -name configure|sort`
+do
+pushd `dirname $i`
 %configure2_5x \
 	--enable-shared \
 	--with-included-gettext \
@@ -175,9 +175,13 @@ export JAR="%{_bindir}/fastjar"
 	--disable-java \
 %endif
 
+popd
+done
+
 %make
 
 %if %do_check
+%check
 export JAVAC=ecj
 LC_ALL=C make check
 %endif
@@ -312,7 +316,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/autopoint
 %{_bindir}/gettextize
 %{_datadir}/%{name}/ABOUT-NLS
-%{_datadir}/%{name}/archive.tar.gz
+%{_datadir}/%{name}/archive*
 %{_datadir}/%{name}/config.rpath
 %{_datadir}/%{name}/*.h
 %{_datadir}/%{name}/intl
@@ -337,7 +341,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc gettext-runtime/intl-java/javadoc*
 %{_libdir}/%{name}/gnu.gettext.*
-#%{_datadir}/%{name}/*.jar
+%{_datadir}/%{name}/*.jar
 %endif
 
 %if %enable_csharp
