@@ -14,17 +14,36 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.1.1
-Release:	%mkrel 2
-License:	GPL
+Release:	3
+License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
-Source:		ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source1:	%{SOURCE0}.sig
 Source2:	po-mode-init.el
 Patch8:		gettext-0.18.1-fix-str-fmt.patch
 Patch9:		gettext-0.18.1.1-linkage.patch
-# (Abel) we pick mono here, though pnet can be used as well.
+
+BuildRequires:  automake
+BuildRequires:	bison
+BuildRequires:	emacs-nox
+BuildRequires:	flex
+BuildRequires:	texinfo
+BuildRequires:	acl-devel
+BuildRequires:	libgomp-devel
+BuildRequires:	libunistring-devel
+BuildRequires:	pkgconfig(libcroco-0.6)
+BuildRequires:	pkgconfig(ncurses)
+BuildRequires:	pkgconfig(libxml-2.0)
+%if %enable_check
+# test suite
+BuildRequires:	locales-fa
+BuildRequires:	locales-fr
+BuildRequires:	locales-ja
+BuildRequires:	locales-zh
+%endif
 %if %enable_csharp
+# (Abel) we pick mono here, though pnet can be used as well.
 BuildRequires:	mono
 %endif
 %if %enable_java
@@ -33,30 +52,13 @@ BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
 BuildRequires:	fastjar
 %endif
-BuildRequires:  automake
-BuildRequires:	bison
-BuildRequires:	flex
-BuildRequires:	emacs-bin
-BuildRequires:	texinfo
-BuildRequires:	libgomp-devel
-BuildRequires:	libcroco0.6-devel
-BuildRequires:	libunistring-devel
-BuildRequires:	ncurses-devel
-BuildRequires:	libxml2-devel
-BuildRequires:	acl-devel
-# test suite
-BuildRequires:	locales-fa
-BuildRequires:	locales-fr
-BuildRequires:	locales-ja
-BuildRequires:	locales-zh
 
-Requires:	%{name}-base = %{version}
-Requires:	%{misclibname} = %{version}
+Requires:	%{name}-base = %{version}-%{release}
+Requires:	%{misclibname} = %{version}-%{release}
 # xgettext will dlopen() it when extracting strings from glade files
 Requires:	%mklibname expat 1
 Requires(post):	info-install
 Requires(preun): info-install
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 The GNU gettext package provides a set of tools and documentation for producing
@@ -90,7 +92,7 @@ system internationalization.
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
-Provides:       libgettextmisc
+Provides:	libgettextmisc
 
 %description	-n %{misclibname}
 This package contains all other libraries used by %{name} utilities,
@@ -115,8 +117,7 @@ want to add gettext support for your project.
 %package	base
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
-Requires:	%{intllibname} = %{version}
-Conflicts: gettext < 0.14.5-3mdk
+Requires:	%{intllibname} = %{version}-%{release}
 
 %description	base
 This package contains the basic binary from %{name}. It is splitted from
@@ -164,6 +165,8 @@ for i in `find -name configure|sort`
 do
 pushd `dirname $i`
 %configure2_5x \
+	--disable-static \
+	--disable-rpath \
 	--enable-shared \
 	--with-included-gettext \
 %if %enable_csharp
@@ -187,31 +190,32 @@ LC_ALL=C make check
 %endif
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 %makeinstall_std
+find %{buildroot} -name '*.la' -exec rm -f {} \;
 
 # remove unwanted files
-rm -f $RPM_BUILD_ROOT%{_includedir}/libintl.h \
-      $RPM_BUILD_ROOT%{_datadir}/locale/locale.alias
+rm -f %{buildroot}%{_includedir}/libintl.h \
+      %{buildroot}%{_datadir}/locale/locale.alias
 rm -f gettext-runtime/intl-java/javadoc2/package-list
 
-install -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/emacs/site-start.d/%{name}.el
+install -D -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/emacs/site-start.d/%{name}.el
 
 # remove non-standard lc directories
-for i in en@boldquot en@quot ; do rm -rf $RPM_BUILD_ROOT/%{_datadir}/locale/$i; done
+for i in en@boldquot en@quot ; do rm -rf %{buildroot}/%{_datadir}/locale/$i; done
 
 # move installed doc back to %%doc
 rm -rf htmldoc examples
 mkdir htmldoc
 for i in gettext-runtime/man/*.html; do
-  rm -f $RPM_BUILD_ROOT%{_datadir}/doc/gettext/`basename $i`
+  rm -f %{buildroot}%{_datadir}/doc/gettext/`basename $i`
 done
-rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/gettext/javadoc*
-mv $RPM_BUILD_ROOT%{_datadir}/doc/gettext/* $RPM_BUILD_ROOT/%{_datadir}/doc/libasprintf/* htmldoc
+rm -rf %{buildroot}%{_datadir}/doc/gettext/javadoc*
+mv %{buildroot}%{_datadir}/doc/gettext/* %{buildroot}/%{_datadir}/doc/libasprintf/* htmldoc
 mv htmldoc/examples examples
 
 # move crucial stuff to /lib and /bin
-pushd $RPM_BUILD_ROOT
+pushd %{buildroot}
 mkdir -p bin
 mkdir -p ./%{_lib}
 mv usr/bin/gettext bin/
@@ -226,14 +230,11 @@ popd
 
 # remove java stuff, otherwise rpm complains
 %if !%enable_java
-rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/gnu.gettext.* \
-      $RPM_BUILD_ROOT%{_datadir}/%{name}/*.jar
+rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
+      %{buildroot}%{_datadir}/%{name}/*.jar
 %endif
 
 %find_lang %{name} --all-name
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 %_install_info %{name}.info
@@ -247,22 +248,7 @@ rm -rf $RPM_BUILD_ROOT
 %preun devel
 %_remove_install_info autosprintf.info
 
-%if %mdkversion < 200900
-%post -n %{intllibname} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{intllibname} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%post -n %{misclibname} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{misclibname} -p /sbin/ldconfig
-%endif
-
 %files
-%defattr(-,root,root)
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS 
 %config(noreplace) %{_sysconfdir}/emacs/site-start.d/*.el
 %{_bindir}/envsubst
@@ -291,8 +277,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/recode-sr-latin.*
 
 %files base -f %{name}.lang
-%defattr(-,root,root)
 %doc gettext-runtime/man/*.1.html
+%doc gettext-runtime/intl/COPYING*
 /bin/gettext
 %{_bindir}/gettext
 %{_bindir}/ngettext
@@ -300,18 +286,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ngettext*
 
 %files -n %{intllibname}
-%defattr(-,root,root)
-%doc gettext-runtime/intl/COPYING*
-/%{_lib}/lib*.so.*
+/%{_lib}/lib*.so.%{major}*
 
 %files -n %{misclibname}
-%defattr(-,root,root)
-%doc gettext-runtime/intl/COPYING*
 %{_libdir}/lib*-*.*.so
 %{_libdir}/lib*.so.*
 
 %files devel
-%defattr(-,root,root)
 %doc gettext-runtime/man/*.3.html examples htmldoc
 %{_bindir}/autopoint
 %{_bindir}/gettextize
@@ -324,8 +305,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/*
 %{_includedir}/*
 %{_infodir}/autosprintf*
-%{_libdir}/lib*.a
-%{_libdir}/lib*.la
 # "lib*.so" cannot be used (it should be 'lib[^\.]*\.so' regexp in fact
 # but using regexp is not possible here; so we list all files manually
 %{_libdir}/libasprintf.so
