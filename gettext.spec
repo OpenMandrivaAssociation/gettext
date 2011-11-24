@@ -35,7 +35,7 @@ BuildRequires:	libunistring-devel
 BuildRequires:	pkgconfig(libcroco-0.6)
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(libxml-2.0)
-%if %enable_check
+%if %do_check
 # test suite
 BuildRequires:	locales-fa
 BuildRequires:	locales-fr
