@@ -1,5 +1,8 @@
-%define major 8
-%define intllibname %mklibname intl %{major}
+%define intl_major 8
+%define major 0
+%define libintl %mklibname intl %{intl_major}
+%define libasprintf %mklibname asprintf %{major}
+%define libgettextpo %mklibname gettextpo %{major}
 %define misclibname %mklibname gettextmisc
 
 %define do_check 1
@@ -14,7 +17,7 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.1.1
-Release:	3
+Release:	4
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -78,23 +81,41 @@ Build Option:
 --with csharp          Enables C# support in gettext
 --without java         Disables Java support in gettext
 
-%package	-n %{intllibname}
+%package	-n %{libintl}
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
 Provides:	libintl = %{version}-%{release}
 
-%description	-n %{intllibname}
+%description	-n %{libintl}
 This package contains the libintl library, which is important for
 system internationalization.
 
-%package	-n %{misclibname}
-Summary:	Other %{name} libraries needed by %{name} utilities
+%package -n	%{libasprintf}
+Summary:	%{name} libasprintf needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
-Provides:	libgettextmisc
+Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 
-%description	-n %{misclibname}
+%description -n %{libasprintf}
+This package contains libasprintf shared library.
+
+%package -n	%{libgettextpo}
+Summary:	%{name} libgettextpo needed by %{name} utilities
+Group:		System/Libraries
+License:	LGPL
+Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
+
+%description -n %{libgettextpo}
+This package contains libgettextpo shared library.
+
+%package       -n %{misclibname}
+Summary:       Other %{name} libraries needed by %{name} utilities
+Group:         System/Libraries
+License:       LGPL
+Provides:      libgettextmisc
+
+%description   -n %{misclibname}
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
@@ -117,7 +138,7 @@ want to add gettext support for your project.
 %package	base
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
-Requires:	%{intllibname} = %{version}-%{release}
+Requires:	%{libintl} = %{version}-%{release}
 
 %description	base
 This package contains the basic binary from %{name}. It is splitted from
@@ -224,8 +245,8 @@ mv .%{_libdir}/libintl.so.* ./%{_lib}/
 rm -f .%{_libdir}/libintl.so
 # if major changed, then package build will fail, which is a GOOD THING.
 # this prevents mindless packaging.
-[ -f %{_lib}/libintl.so.%{major} ] && \
-  ln -s ../../%{_lib}/libintl.so.%{major} .%{_libdir}/libintl.so
+[ -f %{_lib}/libintl.so.%{intl_major} ] && \
+  ln -s ../../%{_lib}/libintl.so.%{intl_major} .%{_libdir}/libintl.so
 popd
 
 # remove java stuff, otherwise rpm complains
@@ -285,12 +306,18 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 %{_mandir}/man1/gettext*
 %{_mandir}/man1/ngettext*
 
-%files -n %{intllibname}
-/%{_lib}/lib*.so.%{major}*
+%files -n %{libintl}
+/%{_lib}/libintl.so.%{intl_major}*
+
+%files -n %{libasprintf}
+%{_libdir}/libasprintf.so.%{major}*
+
+%files -n %{libgettextpo}
+%{_libdir}/libgettextpo.so.%{major}*
 
 %files -n %{misclibname}
-%{_libdir}/lib*-*.*.so
-%{_libdir}/lib*.so.*
+%{_libdir}/libgettextlib-*.so
+%{_libdir}/libgettextsrc-*.so
 
 %files devel
 %doc gettext-runtime/man/*.3.html examples htmldoc
@@ -317,7 +344,6 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 
 %if %enable_java
 %files java
-%defattr(-,root,root)
 %doc gettext-runtime/intl-java/javadoc*
 %{_libdir}/%{name}/gnu.gettext.*
 %{_datadir}/%{name}/*.jar
@@ -325,7 +351,6 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 
 %if %enable_csharp
 %files csharp
-%defattr(-,root,root)
 %doc gettext-runtime/intl-csharp/csharpdoc/*
 %{_libdir}/*.dll
 %{_libdir}/gettext/*.exe
