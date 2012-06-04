@@ -17,7 +17,7 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.1.1
-Release:	4
+Release:	5
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -27,7 +27,7 @@ Source2:	po-mode-init.el
 Patch8:		gettext-0.18.1-fix-str-fmt.patch
 Patch9:		gettext-0.18.1.1-linkage.patch
 
-BuildRequires:  automake
+BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	emacs-nox
 BuildRequires:	flex
@@ -60,8 +60,6 @@ Requires:	%{name}-base = %{version}-%{release}
 Requires:	%{misclibname} = %{version}-%{release}
 # xgettext will dlopen() it when extracting strings from glade files
 Requires:	%mklibname expat 1
-Requires(post):	info-install
-Requires(preun): info-install
 
 %description
 The GNU gettext package provides a set of tools and documentation for producing
@@ -81,13 +79,13 @@ Build Option:
 --with csharp          Enables C# support in gettext
 --without java         Disables Java support in gettext
 
-%package	-n %{libintl}
+%package -n	%{libintl}
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
 Provides:	libintl = %{version}-%{release}
 
-%description	-n %{libintl}
+%description -n	%{libintl}
 This package contains the libintl library, which is important for
 system internationalization.
 
@@ -97,7 +95,7 @@ Group:		System/Libraries
 License:	LGPL
 Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 
-%description -n %{libasprintf}
+%description -n	%{libasprintf}
 This package contains libasprintf shared library.
 
 %package -n	%{libgettextpo}
@@ -106,16 +104,16 @@ Group:		System/Libraries
 License:	LGPL
 Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 
-%description -n %{libgettextpo}
+%description -n	%{libgettextpo}
 This package contains libgettextpo shared library.
 
-%package       -n %{misclibname}
-Summary:       Other %{name} libraries needed by %{name} utilities
-Group:         System/Libraries
-License:       LGPL
-Provides:      libgettextmisc
+%package -n	%{misclibname}
+Summary:	Other %{name} libraries needed by %{name} utilities
+Group:		System/Libraries
+License:	LGPL
+Provides:	libgettextmisc
 
-%description   -n %{misclibname}
+%description -n	%{misclibname}
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
@@ -126,8 +124,6 @@ License:	LGPL
 Requires:	%{name} = %{version}
 # fwang: autopoint requires cvs to work
 Requires:	cvs
-Requires(post): info-install
-Requires(preun): info-install
 
 %description	devel
 This package contains all development related files necessary for
@@ -144,7 +140,7 @@ Requires:	%{libintl} = %{version}-%{release}
 This package contains the basic binary from %{name}. It is splitted from
 %{name} because initscript need it to show translated boot messages.
 
-%if %enable_java
+%if %{enable_java}
 %package	java
 Summary:	Java binding for GNU gettext
 Group:		System/Internationalization
@@ -156,7 +152,7 @@ functions in Java. This allows compiling GNU gettext message catalogs
 into Java ResourceBundle classes.
 %endif
 
-%if %enable_csharp
+%if %{enable_csharp}
 %package	csharp
 Summary:	C# binding for GNU gettext
 Group:		System/Internationalization
@@ -190,12 +186,12 @@ pushd `dirname $i`
 	--disable-rpath \
 	--enable-shared \
 	--with-included-gettext \
-%if %enable_csharp
+%if %{enable_csharp}
 	--enable-csharp=mono \
 %else
 	--disable-csharp \
 %endif
-%if ! %enable_java
+%if ! %{enable_java}
 	--disable-java \
 %endif
 
@@ -204,7 +200,7 @@ done
 
 %make
 
-%if %do_check
+%if %{do_check}
 %check
 export JAVAC=ecj
 LC_ALL=C make check
@@ -213,7 +209,6 @@ LC_ALL=C make check
 %install
 rm -rf %{buildroot}
 %makeinstall_std
-find %{buildroot} -name '*.la' -exec rm -f {} \;
 
 # remove unwanted files
 rm -f %{buildroot}%{_includedir}/libintl.h \
@@ -250,24 +245,12 @@ rm -f .%{_libdir}/libintl.so
 popd
 
 # remove java stuff, otherwise rpm complains
-%if !%enable_java
+%if !%{enable_java}
 rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
       %{buildroot}%{_datadir}/%{name}/*.jar
 %endif
 
 %find_lang %{name} --all-name
-
-%post
-%_install_info %{name}.info
-
-%preun
-%_remove_install_info %{name}.info
-
-%post devel
-%_install_info autosprintf.info
-
-%preun devel
-%_remove_install_info autosprintf.info
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS 
@@ -287,7 +270,7 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 %{_libdir}/%{name}/project-id
 %{_libdir}/%{name}/urlget
 %{_libdir}/%{name}/user-email
-%if %enable_java
+%if %{enable_java}
 %exclude %{_libdir}/%{name}/gnu.gettext.*
 %endif
 %{_infodir}/gettext.*
@@ -342,14 +325,14 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 %{_mandir}/man1/autopoint.*
 %{_mandir}/man3/*
 
-%if %enable_java
+%if %{enable_java}
 %files java
 %doc gettext-runtime/intl-java/javadoc*
 %{_libdir}/%{name}/gnu.gettext.*
 %{_datadir}/%{name}/*.jar
 %endif
 
-%if %enable_csharp
+%if %{enable_csharp}
 %files csharp
 %doc gettext-runtime/intl-csharp/csharpdoc/*
 %{_libdir}/*.dll
