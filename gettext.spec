@@ -111,7 +111,6 @@ This package contains libgettextpo shared library.
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
-Provides:	libgettextmisc
 
 %description -n	%{misclibname}
 This package contains all other libraries used by %{name} utilities,
