@@ -14,10 +14,12 @@
 %define enable_csharp 0
 %{?_with_csharp: %global enable_csharp 1}
 
+%bcond_without	uclibc
+
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.1.1
-Release:	8
+Release:	9
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -26,6 +28,10 @@ Source1:	%{SOURCE0}.sig
 Source2:	po-mode-init.el
 Patch8:		gettext-0.18.1-fix-str-fmt.patch
 Patch9:		gettext-0.18.1.1-linkage.patch
+Patch10:	gettext-0.18.1.1-uclibc_sched_param-def.patch
+Patch11:	gettext-0.18.1.1-parallel.patch
+Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
+Patch13:	gettext-0.18.1.1-uclibc-localename.patch
 
 BuildRequires:	automake
 BuildRequires:	bison
@@ -54,6 +60,9 @@ BuildRequires:	eclipse-ecj
 BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
 BuildRequires:	fastjar
+%endif
+%if %{with uclibc}
+BuildRequires:	uClibc-devel >= 0.9.33.2-9
 %endif
 
 Requires:	%{name}-base = %{version}-%{release}
@@ -88,6 +97,15 @@ Provides:	libintl = %{version}-%{release}
 %description -n	%{libintl}
 This package contains the libintl library, which is important for
 system internationalization.
+
+%package -n	uclibc-%{libintl}
+Summary:	Basic libintl library for internationalization linked against uClibc
+Group:		System/Libraries
+License:	LGPL
+
+%description -n	uclibc-%{libintl}
+This package contains a uClibc linked version of the libintl library, which is
+important for system internationalization.
 
 %package -n	%{libasprintf}
 Summary:	%{name} libasprintf needed by %{name} utilities
@@ -139,6 +157,9 @@ want to add gettext support for your project.
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
 Requires:	%{libintl} = %{version}-%{release}
+%if %{with uclibc}
+Requires:	uclibc-%{libintl} = %{version}-%{release}
+%endif
 
 %description	base
 This package contains the basic binary from %{name}. It is splitted from
@@ -170,8 +191,12 @@ into C# dll or resource files.
 
 %prep
 %setup -q
-%patch8 -p0 -b .str
-%patch9 -p1 -b .link
+%patch8 -p0 -b .str~
+%patch9 -p1 -b .link~
+%patch10 -p1 -b .uclibc~
+%patch11 -p1 -b .parallel̃̃~
+%patch12 -p1 -b .wchar~
+%patch13 -p1 -b .locale~
 
 %build
 
@@ -182,9 +207,25 @@ export JAR="%{_bindir}/fastjar"
 %endif
 
 autoreconf -fi
+
+%if %{with uclibc}
+mkdir -p gettext-tools/uclibc
+pushd gettext-tools/uclibc
+CONFIGURE_TOP=.. \
+%configure2_5x	--enable-shared \
+		--disable-static \
+		--with-included-gettext \
+		--libdir=%{uclibc_root}/%{_lib}
+		CC="%{uclibc_cc}" \
+		CFLAGS="%{uclibc_cflags}"
+%make -C intl
+popd
+%endif
+
 for i in `find -name configure|sort`
 do
 pushd `dirname $i`
+CONFIGURE_TOP=. \
 %configure2_5x \
 	--disable-static \
 	--disable-rpath \
@@ -213,6 +254,13 @@ LC_ALL=C make check
 %install
 rm -rf %{buildroot}
 %makeinstall_std
+
+%if %{with uclibc}
+%makeinstall_std -C gettext-tools/uclibc/intl
+rm -f %{buildroot}%{uclibc_root}/%{_lib}/libintl.so
+mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
+ln -srf %{buildroot}%{uclibc_root}/%{_lib}/libintl.so.%{intl_major}.*.* %{buildroot}%{uclibc_root}%{_libdir}/libintl.so
+%endif
 
 # remove unwanted files
 rm -f %{buildroot}%{_includedir}/libintl.h \
@@ -296,6 +344,9 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 %files -n %{libintl}
 /%{_lib}/libintl.so.%{intl_major}*
 
+%files -n uclibc-%{libintl}
+%{uclibc_root}/%{_lib}/libintl.so.%{intl_major}*
+
 %files -n %{libasprintf}
 %{_libdir}/libasprintf.so.%{major}*
 
@@ -326,6 +377,9 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 %{_libdir}/libgettextpo.so
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
+%if %{with uclibc}
+%{uclibc_root}%{_libdir}/libintl.so
+%endif
 %{_mandir}/man1/autopoint.*
 %{_mandir}/man3/*
 
