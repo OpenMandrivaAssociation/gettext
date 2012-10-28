@@ -215,12 +215,11 @@ export JAR="%{_bindir}/fastjar"
 mkdir -p gettext-tools/uclibc
 pushd gettext-tools/uclibc
 CONFIGURE_TOP=.. \
-%configure2_5x	--enable-shared \
+%uclibc_configure \
+		--enable-shared \
 		--disable-static \
 		--with-included-gettext \
-		--libdir=%{uclibc_root}/%{_lib} \
-		CC="%{uclibc_cc}" \
-		CFLAGS="%{uclibc_cflags}"
+		--libdir=%{uclibc_root}/%{_lib}
 %make -C intl
 popd
 %endif
