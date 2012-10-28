@@ -66,6 +66,8 @@ BuildRequires:	fastjar
 %if %{with uclibc}
 BuildRequires:	uClibc-devel >= 0.9.33.2-15
 %endif
+# ugly workaround..
+ExclusiveArch:	%{ix86}
 
 Requires:	%{name}-base = %{version}-%{release}
 Requires:	%{misclibname} = %{version}-%{release}
