@@ -33,7 +33,7 @@ Patch11:	gettext-0.18.1.1-parallel.patch
 Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
 Patch13:	gettext-0.18.1.1-uclibc-localename.patch
 Patch14:	gettext-0.18.1.1-stdio-gets.patch
-
+Patch15:	gettext-0.18.1-fix-xgettext-crash.patch
 
 BuildRequires:	automake
 BuildRequires:	bison
@@ -200,6 +200,7 @@ into C# dll or resource files.
 %patch12 -p1 -b .wchar~
 %patch13 -p1 -b .locale~
 %patch14 -p1 -b .gets~
+%patch15 -p1 -b .crash~
 
 autoreconf -fi
 
