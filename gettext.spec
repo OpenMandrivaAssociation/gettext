@@ -200,6 +200,8 @@ into C# dll or resource files.
 %patch12 -p1 -b .wchar~
 %patch13 -p1 -b .locale~
 
+autoreconf -fi
+
 %build
 
 %if %enable_java
@@ -207,8 +209,6 @@ export GCJ="%{_bindir}/gcj"
 export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
-
-autoreconf -fi
 
 %if %{with uclibc}
 mkdir -p gettext-tools/uclibc
