@@ -32,6 +32,8 @@ Patch10:	gettext-0.18.1.1-uclibc_sched_param-def.patch
 Patch11:	gettext-0.18.1.1-parallel.patch
 Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
 Patch13:	gettext-0.18.1.1-uclibc-localename.patch
+Patch14:	gettext-0.18.1.1-stdio-gets.patch
+
 
 BuildRequires:	automake
 BuildRequires:	bison
@@ -42,7 +44,7 @@ BuildRequires:	acl-devel
 BuildRequires:	libgomp-devel
 BuildRequires:	libunistring-devel
 BuildRequires:	pkgconfig(libcroco-0.6)
-BuildRequires:	pkgconfig(ncurses)
+BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
 %if %do_check
 # test suite
@@ -197,6 +199,7 @@ into C# dll or resource files.
 %patch11 -p1 -b .parallel̃̃~
 %patch12 -p1 -b .wchar~
 %patch13 -p1 -b .locale~
+%patch14 -p1 -b .gets~
 
 autoreconf -fi
 
