@@ -19,7 +19,7 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.1.1
-Release:	10
+Release:	11
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -46,6 +46,7 @@ BuildRequires:	libunistring-devel
 BuildRequires:	pkgconfig(libcroco-0.6)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
+BuildRequires:	chrpath
 %if %do_check
 # test suite
 BuildRequires:	locales-fa
@@ -90,7 +91,7 @@ Build Option:
 --with csharp          Enables C# support in gettext
 --without java         Disables Java support in gettext
 
-%package -n	%{libintl}
+%package -n %{libintl}
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
@@ -100,7 +101,8 @@ Provides:	libintl = %{version}-%{release}
 This package contains the libintl library, which is important for
 system internationalization.
 
-%package -n	uclibc-%{libintl}
+%if %{with uclibc}
+%package -n uclibc-%{libintl}
 Summary:	Basic libintl library for internationalization linked against uClibc
 Group:		System/Libraries
 License:	LGPL
@@ -108,8 +110,9 @@ License:	LGPL
 %description -n	uclibc-%{libintl}
 This package contains a uClibc linked version of the libintl library, which is
 important for system internationalization.
+%endif
 
-%package -n	%{libasprintf}
+%package -n %{libasprintf}
 Summary:	%{name} libasprintf needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -118,7 +121,7 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libasprintf}
 This package contains libasprintf shared library.
 
-%package -n	%{libgettextpo}
+%package -n %{libgettextpo}
 Summary:	%{name} libgettextpo needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -127,7 +130,7 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libgettextpo}
 This package contains libgettextpo shared library.
 
-%package -n	%{misclibname}
+%package -n %{misclibname}
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -136,7 +139,7 @@ License:	LGPL
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
-%package	devel
+%package devel
 Summary:	Development files for %{name}
 Group:		Development/C
 License:	LGPL
@@ -149,13 +152,13 @@ Requires:	%{libintl} = %{version}-%{release}
 # fwang: autopoint requires cvs to work
 Requires:	cvs
 
-%description	devel
+%description devel
 This package contains all development related files necessary for
 developing or compiling applications/libraries that needs
 internationalization capability. You also need this package if you
 want to add gettext support for your project.
 
-%package	base
+%package base
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
 Requires:	%{libintl} = %{version}-%{release}
@@ -163,29 +166,29 @@ Requires:	%{libintl} = %{version}-%{release}
 Requires:	uclibc-%{libintl} = %{version}-%{release}
 %endif
 
-%description	base
+%description base
 This package contains the basic binary from %{name}. It is splitted from
 %{name} because initscript need it to show translated boot messages.
 
 %if %{enable_java}
-%package	java
+%package java
 Summary:	Java binding for GNU gettext
 Group:		System/Internationalization
 Requires:	%{name} = %{version}
 
-%description	java
+%description java
 This package contains class file that implements the main GNU libintl
 functions in Java. This allows compiling GNU gettext message catalogs
 into Java ResourceBundle classes.
 %endif
 
 %if %{enable_csharp}
-%package	csharp
+%package csharp
 Summary:	C# binding for GNU gettext
 Group:		System/Internationalization
 Requires:	mono
 
-%description	csharp
+%description csharp
 This package contains class file that implements the main GNU libintl
 functions in C#. This allows compiling GNU gettext message catalogs
 into C# dll or resource files.
@@ -196,7 +199,7 @@ into C# dll or resource files.
 %patch8 -p0 -b .str~
 %patch9 -p1 -b .link~
 %patch10 -p1 -b .uclibc~
-%patch11 -p1 -b .parallel̃̃~
+%patch11 -p1 -b .parallel~
 %patch12 -p1 -b .wchar~
 %patch13 -p1 -b .locale~
 %patch14 -p1 -b .gets~
@@ -255,7 +258,6 @@ LC_ALL=C make check
 %endif
 
 %install
-rm -rf %{buildroot}
 %makeinstall_std
 
 %if %{with uclibc}
@@ -304,6 +306,13 @@ popd
 rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
       %{buildroot}%{_datadir}/%{name}/*.jar
 %endif
+
+# cleanup rpaths
+for i in %{buildroot}%{_bindir}/* `find %{buildroot}%{_libdir} -type f`; do
+    if file $i | grep "ELF 64-bit" >/dev/null; then
+	chrpath -l $i && chrpath --delete $i
+    fi
+done
 
 %find_lang %{name} --all-name
 
