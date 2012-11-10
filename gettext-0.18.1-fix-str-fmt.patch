@@ -1,0 +1,42 @@
+--- gettext-tools/libgrep/m-fgrep.c.str	2010-06-06 12:41:55.000000000 +0200
++++ gettext-tools/libgrep/m-fgrep.c	2010-06-06 12:42:16.000000000 +0200
+@@ -106,7 +106,7 @@
+       for (lim = beg; lim < pattern + pattern_size && *lim != '\n'; ++lim)
+         ;
+       if ((err = kwsincr (ckwset->kwset, beg, lim - beg)) != NULL)
+-        error (exit_failure, 0, err);
++        error (exit_failure, 0, "%s", err);
+       if (lim < pattern + pattern_size)
+         ++lim;
+       beg = lim;
+@@ -114,7 +114,7 @@
+   while (beg < pattern + pattern_size);
+ 
+   if ((err = kwsprep (ckwset->kwset)) != NULL)
+-    error (exit_failure, 0, err);
++    error (exit_failure, 0, "%s", err);
+   return ckwset;
+ }
+ 
+--- gettext-tools/libgrep/m-regex.c.str	2010-06-06 12:42:29.000000000 +0200
++++ gettext-tools/libgrep/m-regex.c	2010-06-06 12:42:46.000000000 +0200
+@@ -106,7 +106,7 @@
+ 
+         if ((err = re_compile_pattern (motif, len,
+                                        &cregex->patterns[cregex->pcount].regexbuf)) != NULL)
+-          error (exit_failure, 0, err);
++          error (exit_failure, 0, "%s", err);
+         cregex->pcount++;
+ 
+         motif = sep;
+--- gettext-tools/gnulib-tests/test-xvasprintf.c.str	2010-06-06 13:06:19.000000000 +0200
++++ gettext-tools/gnulib-tests/test-xvasprintf.c	2010-06-06 13:07:12.000000000 +0200
+@@ -95,7 +95,7 @@
+   {
+     /* Silence gcc warning about zero-length format string.  */
+     char *empty = "";
+-    result = xasprintf (empty);
++    result = xasprintf ("%s", empty);
+     ASSERT (result != NULL);
+     ASSERT (strcmp (result, "") == 0);
+     free (result);
