@@ -14,12 +14,10 @@
 %define enable_csharp 0
 %{?_with_csharp: %global enable_csharp 1}
 
-%bcond_without	uclibc
-
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.1.1
-Release:	11
+Release:	8
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -28,12 +26,6 @@ Source1:	%{SOURCE0}.sig
 Source2:	po-mode-init.el
 Patch8:		gettext-0.18.1-fix-str-fmt.patch
 Patch9:		gettext-0.18.1.1-linkage.patch
-Patch10:	gettext-0.18.1.1-uclibc_sched_param-def.patch
-Patch11:	gettext-0.18.1.1-parallel.patch
-Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
-Patch13:	gettext-0.18.1.1-uclibc-localename.patch
-Patch14:	gettext-0.18.1.1-stdio-gets.patch
-Patch15:	gettext-0.18.1-fix-xgettext-crash.patch
 
 BuildRequires:	automake
 BuildRequires:	bison
@@ -44,9 +36,8 @@ BuildRequires:	acl-devel
 BuildRequires:	libgomp-devel
 BuildRequires:	libunistring-devel
 BuildRequires:	pkgconfig(libcroco-0.6)
-BuildRequires:	pkgconfig(ncursesw)
+BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(libxml-2.0)
-BuildRequires:	chrpath
 %if %do_check
 # test suite
 BuildRequires:	locales-fa
@@ -63,9 +54,6 @@ BuildRequires:	eclipse-ecj
 BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
 BuildRequires:	fastjar
-%endif
-%if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-15
 %endif
 
 Requires:	%{name}-base = %{version}-%{release}
@@ -91,7 +79,7 @@ Build Option:
 --with csharp          Enables C# support in gettext
 --without java         Disables Java support in gettext
 
-%package -n %{libintl}
+%package -n	%{libintl}
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
@@ -101,18 +89,7 @@ Provides:	libintl = %{version}-%{release}
 This package contains the libintl library, which is important for
 system internationalization.
 
-%if %{with uclibc}
-%package -n uclibc-%{libintl}
-Summary:	Basic libintl library for internationalization linked against uClibc
-Group:		System/Libraries
-License:	LGPL
-
-%description -n	uclibc-%{libintl}
-This package contains a uClibc linked version of the libintl library, which is
-important for system internationalization.
-%endif
-
-%package -n %{libasprintf}
+%package -n	%{libasprintf}
 Summary:	%{name} libasprintf needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -121,7 +98,7 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libasprintf}
 This package contains libasprintf shared library.
 
-%package -n %{libgettextpo}
+%package -n	%{libgettextpo}
 Summary:	%{name} libgettextpo needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -130,7 +107,7 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libgettextpo}
 This package contains libgettextpo shared library.
 
-%package -n %{misclibname}
+%package -n	%{misclibname}
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -139,7 +116,7 @@ License:	LGPL
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
-%package devel
+%package	devel
 Summary:	Development files for %{name}
 Group:		Development/C
 License:	LGPL
@@ -152,43 +129,40 @@ Requires:	%{libintl} = %{version}-%{release}
 # fwang: autopoint requires cvs to work
 Requires:	cvs
 
-%description devel
+%description	devel
 This package contains all development related files necessary for
 developing or compiling applications/libraries that needs
 internationalization capability. You also need this package if you
 want to add gettext support for your project.
 
-%package base
+%package	base
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
 Requires:	%{libintl} = %{version}-%{release}
-%if %{with uclibc}
-Requires:	uclibc-%{libintl} = %{version}-%{release}
-%endif
 
-%description base
+%description	base
 This package contains the basic binary from %{name}. It is splitted from
 %{name} because initscript need it to show translated boot messages.
 
 %if %{enable_java}
-%package java
+%package	java
 Summary:	Java binding for GNU gettext
 Group:		System/Internationalization
 Requires:	%{name} = %{version}
 
-%description java
+%description	java
 This package contains class file that implements the main GNU libintl
 functions in Java. This allows compiling GNU gettext message catalogs
 into Java ResourceBundle classes.
 %endif
 
 %if %{enable_csharp}
-%package csharp
+%package	csharp
 Summary:	C# binding for GNU gettext
 Group:		System/Internationalization
 Requires:	mono
 
-%description csharp
+%description	csharp
 This package contains class file that implements the main GNU libintl
 functions in C#. This allows compiling GNU gettext message catalogs
 into C# dll or resource files.
@@ -196,16 +170,8 @@ into C# dll or resource files.
 
 %prep
 %setup -q
-%patch8 -p0 -b .str~
-%patch9 -p1 -b .link~
-%patch10 -p1 -b .uclibc~
-%patch11 -p1 -b .parallel~
-%patch12 -p1 -b .wchar~
-%patch13 -p1 -b .locale~
-%patch14 -p1 -b .gets~
-%patch15 -p1 -b .crash~
-
-autoreconf -fi
+%patch8 -p0 -b .str
+%patch9 -p1 -b .link
 
 %build
 
@@ -215,23 +181,10 @@ export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
 
-%if %{with uclibc}
-mkdir -p gettext-tools/uclibc
-pushd gettext-tools/uclibc
-CONFIGURE_TOP=.. \
-%uclibc_configure \
-		--enable-shared \
-		--disable-static \
-		--with-included-gettext \
-		--libdir=%{uclibc_root}/%{_lib}
-%make -C intl
-popd
-%endif
-
+autoreconf -fi
 for i in `find -name configure|sort`
 do
 pushd `dirname $i`
-CONFIGURE_TOP=. \
 %configure2_5x \
 	--disable-static \
 	--disable-rpath \
@@ -258,14 +211,8 @@ LC_ALL=C make check
 %endif
 
 %install
+rm -rf %{buildroot}
 %makeinstall_std
-
-%if %{with uclibc}
-%makeinstall_std -C gettext-tools/uclibc/intl
-rm -f %{buildroot}%{uclibc_root}/%{_lib}/libintl.so
-mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
-ln -srf %{buildroot}%{uclibc_root}/%{_lib}/libintl.so.%{intl_major}.*.* %{buildroot}%{uclibc_root}%{_libdir}/libintl.so
-%endif
 
 # remove unwanted files
 rm -f %{buildroot}%{_includedir}/libintl.h \
@@ -306,13 +253,6 @@ popd
 rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
       %{buildroot}%{_datadir}/%{name}/*.jar
 %endif
-
-# cleanup rpaths
-for i in %{buildroot}%{_bindir}/* `find %{buildroot}%{_libdir} -type f`; do
-    if file $i | grep "ELF 64-bit" >/dev/null; then
-	chrpath -l $i && chrpath --delete $i
-    fi
-done
 
 %find_lang %{name} --all-name
 
@@ -356,9 +296,6 @@ done
 %files -n %{libintl}
 /%{_lib}/libintl.so.%{intl_major}*
 
-%files -n uclibc-%{libintl}
-%{uclibc_root}/%{_lib}/libintl.so.%{intl_major}*
-
 %files -n %{libasprintf}
 %{_libdir}/libasprintf.so.%{major}*
 
@@ -389,9 +326,6 @@ done
 %{_libdir}/libgettextpo.so
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
-%if %{with uclibc}
-%{uclibc_root}%{_libdir}/libintl.so
-%endif
 %{_mandir}/man1/autopoint.*
 %{_mandir}/man3/*
 
@@ -408,3 +342,109 @@ done
 %{_libdir}/*.dll
 %{_libdir}/gettext/*.exe
 %endif
+
+
+%changelog
+* Sun Jul 22 2012 Crispin Boylan <crisb@mandriva.org> 0.18.1.1-8
++ Revision: 810561
+- Drop extraneous provides on misc lib
+
+* Sat Jul 21 2012 Tomasz Pawel Gajc <tpg@mandriva.org> 0.18.1.1-7
++ Revision: 810549
+- require also release tag
+
+* Sat Jul 21 2012 Crispin Boylan <crisb@mandriva.org> 0.18.1.1-6
++ Revision: 810537
+- Fix devel package requires
+
+* Mon Jun 04 2012 Andrey Bondrov <abondrov@mandriva.org> 0.18.1.1-5
++ Revision: 802223
+- Drop some legacy junk
+
+* Fri Feb 17 2012 Matthew Dawkins <mattydaw@mandriva.org> 0.18.1.1-4
++ Revision: 776138
+- split out true DSO versioned soname libs from misc
+
+* Thu Nov 24 2011 Matthew Dawkins <mattydaw@mandriva.org> 0.18.1.1-3
++ Revision: 733246
+- fixed check cond
+- rebuild
+- disabled static build
+- removed .la files
+- removed defattr
+- moved docs from libs to base pkg
+- removed old ldconfig scriptlets
+- removed clean section
+- cleaned up spec
+- removed old conflicts
+- removed mkrel & BuildRoot
+- organized BRs and converted some to pkgconfig provides
+- changed emacs-bin to nox to reduce deps pulled in build
+
+* Tue May 03 2011 Oden Eriksson <oeriksson@mandriva.com> 0.18.1.1-2
++ Revision: 664824
+- mass rebuild
+
+* Fri Jul 09 2010 Funda Wang <fwang@mandriva.org> 0.18.1.1-1mdv2011.0
++ Revision: 549878
+- New version 0.18.1.1
+
+* Thu Apr 29 2010 Christophe Fergeau <cfergeau@mandriva.com> 0.17-9mdv2010.1
++ Revision: 540832
+- rebuild so that shared libraries are properly stripped again
+
+* Wed Apr 28 2010 Christophe Fergeau <cfergeau@mandriva.com> 0.17-8mdv2010.1
++ Revision: 540340
+- rebuild so that shared libraries are properly stripped again
+
+* Wed Apr 28 2010 Christophe Fergeau <cfergeau@mandriva.com> 0.17-7mdv2010.1
++ Revision: 540026
+- rebuild so that shared libraries are properly stripped again
+
+* Sun Mar 14 2010 Oden Eriksson <oeriksson@mandriva.com> 0.17-6mdv2010.1
++ Revision: 519004
+- rebuild
+
+* Wed Sep 02 2009 Christophe Fergeau <cfergeau@mandriva.com> 0.17-5mdv2010.0
++ Revision: 424835
+- rebuild
+
+* Sat Dec 20 2008 Oden Eriksson <oeriksson@mandriva.com> 0.17-4mdv2009.1
++ Revision: 316753
+- added some more -Werror=format-security fixes
+- fix build with -Werror=format-security (P8)
+- added some required conditional spec file voodoo magic
+
+* Sun Jun 29 2008 Oden Eriksson <oeriksson@mandriva.com> 0.17-3mdv2009.0
++ Revision: 229927
+- added P7 from fedora to make it build with glibc28
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - rebuild
+    - kill re-definition of %%buildroot on Pixel's request
+    - move HTML doc in devel sub package
+
+  + Pixel <pixel@mandriva.com>
+    - do not call ldconfig in %%post/%%postun, it is now handled by filetriggers
+
+  + Olivier Blin <blino@mandriva.org>
+    - restore BuildRoot
+
+* Sat Nov 10 2007 Funda Wang <fwang@mandriva.org> 0.17-1mdv2008.1
++ Revision: 107431
+- fix file list
+- drop old gettext-tools fr translation.
+- New version 0.17
+
+* Wed Sep 26 2007 Funda Wang <fwang@mandriva.org> 0.16.1-4mdv2008.0
++ Revision: 93043
+- fix building by adding BR
+
+* Thu Jun 07 2007 Tomasz Pawel Gajc <tpg@mandriva.org> 0.16.1-3mdv2008.0
++ Revision: 36885
+- rebuild for expat
+
+* Sun May 27 2007 Funda Wang <fwang@mandriva.org> 0.16.1-2mdv2008.0
++ Revision: 31725
+- gettext-devel (autopoint) requires cvs to work
+

@@ -1,4 +1,2 @@
 sources:
-  "gettext-0.18.1.1.tar.gz:"	5009deb02f67fc3c59c8ce6b82408d1d35d4e38f
-  "gettext-0.18.1.1.tar.gz.sig:"	23776e36f1b609c12fdb6db9e6f722110140fe15
-  "po-mode-init.el:"	f62a07cf891af9053a907ff217879df66fa9e0a8
+  "gettext-0.18.1.1.tar.gz": 5009deb02f67fc3c59c8ce6b82408d1d35d4e38f
