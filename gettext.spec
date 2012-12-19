@@ -19,7 +19,7 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.1.1
-Release:	12
+Release:	13
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -91,7 +91,7 @@ Build Option:
 --with csharp          Enables C# support in gettext
 --without java         Disables Java support in gettext
 
-%package -n %{libintl}
+%package -n	%{libintl}
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
@@ -102,7 +102,7 @@ This package contains the libintl library, which is important for
 system internationalization.
 
 %if %{with uclibc}
-%package -n uclibc-%{libintl}
+%package -n	uclibc-%{libintl}
 Summary:	Basic libintl library for internationalization linked against uClibc
 Group:		System/Libraries
 License:	LGPL
@@ -112,7 +112,7 @@ This package contains a uClibc linked version of the libintl library, which is
 important for system internationalization.
 %endif
 
-%package -n %{libasprintf}
+%package -n	%{libasprintf}
 Summary:	%{name} libasprintf needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -121,7 +121,7 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libasprintf}
 This package contains libasprintf shared library.
 
-%package -n %{libgettextpo}
+%package -n	%{libgettextpo}
 Summary:	%{name} libgettextpo needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -130,7 +130,7 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libgettextpo}
 This package contains libgettextpo shared library.
 
-%package -n %{misclibname}
+%package -n	%{misclibname}
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -139,7 +139,7 @@ License:	LGPL
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
-%package devel
+%package	devel
 Summary:	Development files for %{name}
 Group:		Development/C
 License:	LGPL
@@ -148,6 +148,9 @@ Requires:	%{libgettextpo} = %{version}-%{release}
 Requires:	%{libasprintf} = %{version}-%{release}
 Requires:	%{misclibname} = %{version}-%{release}
 Requires:	%{libintl} = %{version}-%{release}
+%if %{with uclibc}
+Requires:	uclibc-%{libintl} = %{version}-%{release}
+%endif
 
 # fwang: autopoint requires cvs to work
 Requires:	cvs
@@ -158,37 +161,34 @@ developing or compiling applications/libraries that needs
 internationalization capability. You also need this package if you
 want to add gettext support for your project.
 
-%package base
+%package	base
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
 Requires:	%{libintl} = %{version}-%{release}
-%if %{with uclibc}
-Requires:	uclibc-%{libintl} = %{version}-%{release}
-%endif
 
-%description base
+%description	base
 This package contains the basic binary from %{name}. It is splitted from
 %{name} because initscript need it to show translated boot messages.
 
 %if %{enable_java}
-%package java
+%package	java
 Summary:	Java binding for GNU gettext
 Group:		System/Internationalization
 Requires:	%{name} = %{version}
 
-%description java
+%description	java
 This package contains class file that implements the main GNU libintl
 functions in Java. This allows compiling GNU gettext message catalogs
 into Java ResourceBundle classes.
 %endif
 
 %if %{enable_csharp}
-%package csharp
+%package	csharp
 Summary:	C# binding for GNU gettext
 Group:		System/Internationalization
 Requires:	mono
 
-%description csharp
+%description	csharp
 This package contains class file that implements the main GNU libintl
 functions in C#. This allows compiling GNU gettext message catalogs
 into C# dll or resource files.
@@ -356,8 +356,10 @@ done
 %files -n %{libintl}
 /%{_lib}/libintl.so.%{intl_major}*
 
+%if %{with uclibc}
 %files -n uclibc-%{libintl}
 %{uclibc_root}/%{_lib}/libintl.so.%{intl_major}*
+%endif
 
 %files -n %{libasprintf}
 %{_libdir}/libasprintf.so.%{major}*
@@ -411,6 +413,9 @@ done
 
 
 %changelog
+* Wed Dec 19 2012 Per Øyvind Karlsen <peoryvind@mandriva.org> 0.18.1.1-13
+- move dependency on uclibc library package from -base to -devel package
+
 * Wed Dec 12 2012 Per Øyvind Karlsen <peoryvind@mandriva.org> 0.18.1.1-12
 - fixup after merge and rebuild on ABF
 
