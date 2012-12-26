@@ -18,22 +18,19 @@
 
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
-Version:	0.18.1.1
-Release:	13
+Version:	0.18.2
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
 Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
-Source1:	%{SOURCE0}.sig
+Source1:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz.sig
 Source2:	po-mode-init.el
 Patch8:		gettext-0.18.1-fix-str-fmt.patch
 Patch9:		gettext-0.18.1.1-linkage.patch
-Patch10:	gettext-0.18.1.1-uclibc_sched_param-def.patch
 Patch11:	gettext-0.18.1.1-parallel.patch
 Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
-Patch13:	gettext-0.18.1.1-uclibc-localename.patch
 Patch14:	gettext-0.18.1.1-stdio-gets.patch
-Patch15:	gettext-0.18.1-fix-xgettext-crash.patch
 
 BuildRequires:	automake
 BuildRequires:	bison
@@ -196,14 +193,11 @@ into C# dll or resource files.
 
 %prep
 %setup -q
-%patch8 -p0 -b .str~
+%patch8 -p1 -b .str~
 %patch9 -p1 -b .link~
-%patch10 -p1 -b .uclibc~
 %patch11 -p1 -b .parallel~
 %patch12 -p1 -b .wchar~
-%patch13 -p1 -b .locale~
 %patch14 -p1 -b .gets~
-%patch15 -p1 -b .crash~
 
 autoreconf -fi
 
@@ -315,6 +309,9 @@ for i in %{buildroot}%{_bindir}/* `find %{buildroot}%{_libdir} -type f`; do
 done
 
 %find_lang %{name} --all-name
+
+# For some reason, the post scripts fail to do this
+strip --strip-unneeded %buildroot/%_lib/libintl.so.8.* %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS 
