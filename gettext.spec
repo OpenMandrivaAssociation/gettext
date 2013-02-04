@@ -26,6 +26,7 @@ URL:		http://www.gnu.org/software/gettext/
 Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source1:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz.sig
 Source2:	po-mode-init.el
+Patch0:		gettext-0.18.1-automake-fix-testsuite.patch
 Patch8:		gettext-0.18.1-fix-str-fmt.patch
 Patch9:		gettext-0.18.1.1-linkage.patch
 Patch11:	gettext-0.18.1.1-parallel.patch
@@ -193,11 +194,7 @@ into C# dll or resource files.
 
 %prep
 %setup -q
-%patch8 -p1 -b .str~
-%patch9 -p1 -b .link~
-%patch11 -p1 -b .parallel~
-%patch12 -p1 -b .wchar~
-%patch14 -p1 -b .gets~
+%apply_patches
 
 autoreconf -fi
 
