@@ -19,7 +19,7 @@
 Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Version:	0.18.2
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 URL:		http://www.gnu.org/software/gettext/
@@ -215,7 +215,7 @@ pushd gettext-tools/uclibc
 CONFIGURE_TOP=.. \
 %uclibc_configure \
 		--enable-shared \
-		--disable-static \
+		--enable-static \
 		--with-included-gettext \
 		--libdir=%{uclibc_root}/%{_lib}
 %make -C intl
@@ -259,6 +259,7 @@ LC_ALL=C make check
 rm -f %{buildroot}%{uclibc_root}/%{_lib}/libintl.so
 mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
 ln -srf %{buildroot}%{uclibc_root}/%{_lib}/libintl.so.%{intl_major}.*.* %{buildroot}%{uclibc_root}%{_libdir}/libintl.so
+mv %{buildroot}%{uclibc_root}/%{_lib}/libintl.a %{buildroot}%{uclibc_root}%{_libdir}/libintl.a
 %endif
 
 # remove unwanted files
@@ -389,6 +390,7 @@ strip --strip-unneeded %buildroot/%_lib/libintl.so.8.* %buildroot%_prefix/uclibc
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
 %if %{with uclibc}
+%{uclibc_root}%{_libdir}/libintl.a
 %{uclibc_root}%{_libdir}/libintl.so
 %endif
 %{_mandir}/man1/autopoint.*
