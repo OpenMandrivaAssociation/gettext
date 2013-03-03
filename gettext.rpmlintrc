@@ -1,0 +1,2 @@
+# Intentional for libgettextmisc
+addFilter("E: incoherent-version-in-name")
