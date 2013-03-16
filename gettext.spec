@@ -309,7 +309,10 @@ done
 %find_lang %{name} --all-name
 
 # For some reason, the post scripts fail to do this
-strip --strip-unneeded %buildroot/%_lib/libintl.so.8.* %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
+strip --strip-unneeded %buildroot/%_lib/libintl.so.8.* 
+%if %{with uclibc}
+strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
+%endif
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS 
