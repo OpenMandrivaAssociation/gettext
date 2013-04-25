@@ -3,7 +3,7 @@
 %define libintl %mklibname intl %{intl_major}
 %define libasprintf %mklibname asprintf %{major}
 %define libgettextpo %mklibname gettextpo %{major}
-%define misclibname %mklibname gettextmisc
+%define libgettextmisc %mklibname gettextmisc
 
 %define do_check 1
 %{?_without_check: %global do_check 0}
@@ -16,16 +16,16 @@
 
 %bcond_without	uclibc
 
-Name:		gettext
 Summary:	GNU libraries and utilities for producing multi-lingual messages
+Name:		gettext
 Version:	0.18.2.1
 Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
-URL:		http://www.gnu.org/software/gettext/
+Url:		http://www.gnu.org/software/gettext/
 Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source2:	po-mode-init.el
-Source100:	%name.rpmlintrc
+Source100:	%{name}.rpmlintrc
 Patch0:		gettext-0.18.1-automake-fix-testsuite.patch
 Patch8:		gettext-0.18.1-fix-str-fmt.patch
 #Patch9:		gettext-0.18.1.1-linkage.patch
@@ -33,18 +33,17 @@ Patch11:	gettext-0.18.1.1-parallel.patch
 Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
 Patch14:	gettext-0.18.1.1-stdio-gets.patch
 
-BuildRequires:	automake
 BuildRequires:	bison
+BuildRequires:	chrpath
 BuildRequires:	emacs-nox
 BuildRequires:	flex
 BuildRequires:	texinfo
 BuildRequires:	acl-devel
-BuildRequires:	libgomp-devel
+BuildRequires:	gomp-devel
 BuildRequires:	libunistring-devel
 BuildRequires:	pkgconfig(libcroco-0.6)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
-BuildRequires:	chrpath
 %if %do_check
 # test suite
 BuildRequires:	locales-fa
@@ -67,7 +66,7 @@ BuildRequires:	uClibc-devel >= 0.9.33.2-15
 %endif
 
 Requires:	%{name}-base = %{version}-%{release}
-Requires:	%{misclibname} = %{version}-%{release}
+Requires:	%{libgettextmisc} = %{version}-%{release}
 # xgettext will dlopen() it when extracting strings from glade files
 Requires:	%mklibname expat 1
 
@@ -128,12 +127,12 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libgettextpo}
 This package contains libgettextpo shared library.
 
-%package -n	%{misclibname}
+%package -n	%{libgettextmisc}
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
 
-%description -n	%{misclibname}
+%description -n	%{libgettextmisc}
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
@@ -144,7 +143,7 @@ License:	LGPL
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{libgettextpo} = %{version}-%{release}
 Requires:	%{libasprintf} = %{version}-%{release}
-Requires:	%{misclibname} = %{version}-%{release}
+Requires:	%{libgettextmisc} = %{version}-%{release}
 Requires:	%{libintl} = %{version}-%{release}
 %if %{with uclibc}
 Requires:	uclibc-%{libintl} = %{version}-%{release}
@@ -367,7 +366,7 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %files -n %{libgettextpo}
 %{_libdir}/libgettextpo.so.%{major}*
 
-%files -n %{misclibname}
+%files -n %{libgettextmisc}
 %{_libdir}/libgettextlib-*.so
 %{_libdir}/libgettextsrc-*.so
 
@@ -411,134 +410,4 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %{_libdir}/*.dll
 %{_libdir}/gettext/*.exe
 %endif
-
-
-%changelog
-* Wed Dec 19 2012 Per Øyvind Karlsen <peoryvind@mandriva.org> 0.18.1.1-13
-- move dependency on uclibc library package from -base to -devel package
-
-* Wed Dec 12 2012 Per Øyvind Karlsen <peoryvind@mandriva.org> 0.18.1.1-12
-- fixup after merge and rebuild on ABF
-
-* Sat Nov 03 2012 Tomasz Pawel Gajc <tpg@mandriva.org> 0.18.1.1-11
-+ Revision: 821843
-- spec file clean
-- use chrpath to remove rpath from binaries and libraries
-
-* Mon Oct 29 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 0.18.1.1-10
-+ Revision: 820240
-- try workaround bs issue with package disappearing on i586
-
-* Sun Oct 28 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 0.18.1.1-9
-+ Revision: 820127
-- add upstream patch from debian to fix xgettext segfault in
-  remember_a_message_plural (P15 from Fedora, rhbz#826138)
-- use %%uclibc_configure macro
-- patch gnulib since glibc and C11 dropped gets (P14)
-- do autoreconf in %%prep
-- oops, really build uclibc build against uclibc :p
-- add patches from openembedded to fix build with uClibc
-
-* Sun Jul 22 2012 Crispin Boylan <crisb@mandriva.org> 0.18.1.1-8
-+ Revision: 810561
-- Drop extraneous provides on misc lib
-
-* Sat Jul 21 2012 Tomasz Pawel Gajc <tpg@mandriva.org> 0.18.1.1-7
-+ Revision: 810549
-- require also release tag
-
-* Sat Jul 21 2012 Crispin Boylan <crisb@mandriva.org> 0.18.1.1-6
-+ Revision: 810537
-- Fix devel package requires
-
-* Mon Jun 04 2012 Andrey Bondrov <abondrov@mandriva.org> 0.18.1.1-5
-+ Revision: 802223
-- Drop some legacy junk
-
-* Fri Feb 17 2012 Matthew Dawkins <mattydaw@mandriva.org> 0.18.1.1-4
-+ Revision: 776138
-- split out true DSO versioned soname libs from misc
-
-* Thu Nov 24 2011 Matthew Dawkins <mattydaw@mandriva.org> 0.18.1.1-3
-+ Revision: 733246
-- fixed check cond
-- rebuild
-- disabled static build
-- removed .la files
-- removed defattr
-- moved docs from libs to base pkg
-- removed old ldconfig scriptlets
-- removed clean section
-- cleaned up spec
-- removed old conflicts
-- removed mkrel & BuildRoot
-- organized BRs and converted some to pkgconfig provides
-- changed emacs-bin to nox to reduce deps pulled in build
-
-* Tue May 03 2011 Oden Eriksson <oeriksson@mandriva.com> 0.18.1.1-2
-+ Revision: 664824
-- mass rebuild
-
-* Fri Jul 09 2010 Funda Wang <fwang@mandriva.org> 0.18.1.1-1mdv2011.0
-+ Revision: 549878
-- New version 0.18.1.1
-
-* Thu Apr 29 2010 Christophe Fergeau <cfergeau@mandriva.com> 0.17-9mdv2010.1
-+ Revision: 540832
-- rebuild so that shared libraries are properly stripped again
-
-* Wed Apr 28 2010 Christophe Fergeau <cfergeau@mandriva.com> 0.17-8mdv2010.1
-+ Revision: 540340
-- rebuild so that shared libraries are properly stripped again
-
-* Wed Apr 28 2010 Christophe Fergeau <cfergeau@mandriva.com> 0.17-7mdv2010.1
-+ Revision: 540026
-- rebuild so that shared libraries are properly stripped again
-
-* Sun Mar 14 2010 Oden Eriksson <oeriksson@mandriva.com> 0.17-6mdv2010.1
-+ Revision: 519004
-- rebuild
-
-* Wed Sep 02 2009 Christophe Fergeau <cfergeau@mandriva.com> 0.17-5mdv2010.0
-+ Revision: 424835
-- rebuild
-
-* Sat Dec 20 2008 Oden Eriksson <oeriksson@mandriva.com> 0.17-4mdv2009.1
-+ Revision: 316753
-- added some more -Werror=format-security fixes
-- fix build with -Werror=format-security (P8)
-- added some required conditional spec file voodoo magic
-
-* Sun Jun 29 2008 Oden Eriksson <oeriksson@mandriva.com> 0.17-3mdv2009.0
-+ Revision: 229927
-- added P7 from fedora to make it build with glibc28
-
-  + Thierry Vignaud <tv@mandriva.org>
-    - rebuild
-    - kill re-definition of %%buildroot on Pixel's request
-    - move HTML doc in devel sub package
-
-  + Pixel <pixel@mandriva.com>
-    - do not call ldconfig in %%post/%%postun, it is now handled by filetriggers
-
-  + Olivier Blin <blino@mandriva.org>
-    - restore BuildRoot
-
-* Sat Nov 10 2007 Funda Wang <fwang@mandriva.org> 0.17-1mdv2008.1
-+ Revision: 107431
-- fix file list
-- drop old gettext-tools fr translation.
-- New version 0.17
-
-* Wed Sep 26 2007 Funda Wang <fwang@mandriva.org> 0.16.1-4mdv2008.0
-+ Revision: 93043
-- fix building by adding BR
-
-* Thu Jun 07 2007 Tomasz Pawel Gajc <tpg@mandriva.org> 0.16.1-3mdv2008.0
-+ Revision: 36885
-- rebuild for expat
-
-* Sun May 27 2007 Funda Wang <fwang@mandriva.org> 0.16.1-2mdv2008.0
-+ Revision: 31725
-- gettext-devel (autopoint) requires cvs to work
 
