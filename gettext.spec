@@ -5,7 +5,7 @@
 %define libgettextpo %mklibname gettextpo %{major}
 %define libgettextmisc %mklibname gettextmisc
 
-%define do_check 1
+%define do_check 0
 %{?_without_check: %global do_check 0}
 
 %define enable_java 0
