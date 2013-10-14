@@ -5,21 +5,15 @@
 %define libgettextpo %mklibname gettextpo %{major}
 %define libgettextmisc %mklibname gettextmisc
 
-%define do_check 0
-%{?_without_check: %global do_check 0}
-
-%define enable_java 0
-%{?_without_java: %global enable_java 0}
-
-%define enable_csharp 0
-%{?_with_csharp: %global enable_csharp 1}
-
+%bcond_with	check
+%bcond_with	java
+%bcond_with	csharp
 %bcond_without	uclibc
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.18.3.1
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -44,18 +38,18 @@ BuildRequires:	libunistring-devel
 BuildRequires:	pkgconfig(libcroco-0.6)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
-%if %do_check
+%if %with check
 # test suite
 BuildRequires:	locales-fa
 BuildRequires:	locales-fr
 BuildRequires:	locales-ja
 BuildRequires:	locales-zh
 %endif
-%if %enable_csharp
+%if %with csharp
 # (Abel) we pick mono here, though pnet can be used as well.
 BuildRequires:	mono
 %endif
-%if %enable_java
+%if %with java
 BuildRequires:	eclipse-ecj
 BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
@@ -167,7 +161,7 @@ Requires:	%{libintl} = %{version}-%{release}
 This package contains the basic binary from %{name}. It is splitted from
 %{name} because initscript need it to show translated boot messages.
 
-%if %{enable_java}
+%if %{with java}
 %package	java
 Summary:	Java binding for GNU gettext
 Group:		System/Internationalization
@@ -179,7 +173,7 @@ functions in Java. This allows compiling GNU gettext message catalogs
 into Java ResourceBundle classes.
 %endif
 
-%if %{enable_csharp}
+%if %{with csharp}
 %package	csharp
 Summary:	C# binding for GNU gettext
 Group:		System/Internationalization
@@ -199,7 +193,7 @@ autoreconf -fi
 
 %build
 
-%if %enable_java
+%if %with java
 export GCJ="%{_bindir}/gcj"
 export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
@@ -227,12 +221,12 @@ CONFIGURE_TOP=. \
 	--disable-rpath \
 	--enable-shared \
 	--with-included-gettext \
-%if %{enable_csharp}
+%if %{with csharp}
 	--enable-csharp=mono \
 %else
 	--disable-csharp \
 %endif
-%if ! %{enable_java}
+%if ! %{with java}
 	--disable-java \
 %endif
 
@@ -241,7 +235,7 @@ done
 
 %make
 
-%if %{do_check}
+%if %{with check}
 %check
 export JAVAC=ecj
 LC_ALL=C make check
@@ -293,7 +287,7 @@ rm -f .%{_libdir}/libintl.so
 popd
 
 # remove java stuff, otherwise rpm complains
-%if !%{enable_java}
+%if !%{with java}
 rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
       %{buildroot}%{_datadir}/%{name}/*.jar
 %endif
@@ -333,7 +327,7 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %{_libdir}/%{name}/project-id
 %{_libdir}/%{name}/urlget
 %{_libdir}/%{name}/user-email
-%if %{enable_java}
+%if %{with java}
 %exclude %{_libdir}/%{name}/gnu.gettext.*
 %endif
 %{_infodir}/gettext.*
@@ -397,14 +391,14 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %{_mandir}/man1/autopoint.*
 %{_mandir}/man3/*
 
-%if %{enable_java}
+%if %{with java}
 %files java
 %doc gettext-runtime/intl-java/javadoc*
 %{_libdir}/%{name}/gnu.gettext.*
 %{_datadir}/%{name}/*.jar
 %endif
 
-%if %{enable_csharp}
+%if %{with csharp}
 %files csharp
 %doc gettext-runtime/intl-csharp/csharpdoc/*
 %{_libdir}/*.dll
