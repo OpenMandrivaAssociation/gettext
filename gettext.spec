@@ -21,7 +21,6 @@ Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source2:	po-mode-init.el
 Source100:	%{name}.rpmlintrc
 #Patch0:		gettext-0.18.1-automake-fix-testsuite.patch
-Patch8:		gettext-0.18.1-fix-str-fmt.patch
 #Patch9:		gettext-0.18.1.1-linkage.patch
 Patch11:	gettext-0.18.1.1-parallel.patch
 Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
