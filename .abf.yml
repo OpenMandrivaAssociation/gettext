@@ -1,5 +1,2 @@
-removed_sources:
-  gettext-0.18.2.1.tar.gz: 86066950cac2fcc49cc7bd23f5ea16bed522b410
-  gettext-0.18.3.1.tar.gz: a32c19a6e39450748f6e56d2ac6b8b0966a5ab05
 sources:
-  gettext-0.18.3.2.tar.gz: a2dc46d788edb0078ab20da7bd194bdb6da2f0d9
+  "gettext-0.19.1.tar.gz": 94cd6e81976aeb8ba35cf73967c60b72dd04af8d

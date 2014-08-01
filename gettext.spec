@@ -12,18 +12,19 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.18.3.2
-Release:	3
+Version:	0.19.1
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
 Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Source2:	po-mode-init.el
+# Missing in 0.19.1 tarball
+Source3:	git-version-gen
 Source100:	%{name}.rpmlintrc
-#Patch0:		gettext-0.18.1-automake-fix-testsuite.patch
-#Patch9:		gettext-0.18.1.1-linkage.patch
+# KDE example comes from 2003, it's really useless now
+Patch0:		gettext-0.19.1-drop-kde-example.patch
 Patch11:	gettext-0.18.1.1-parallel.patch
-Patch12:	gettext-0.18.1.1-wchar_uclibc.patch
 Patch14:	gettext-0.18.1.1-stdio-gets.patch
 
 BuildRequires:	bison
