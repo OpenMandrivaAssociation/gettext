@@ -188,6 +188,7 @@ into C# dll or resource files.
 %prep
 %setup -q
 %apply_patches
+install -m 755 %{SOURCE3} build-aux/
 
 autoreconf -fi
 
