@@ -12,7 +12,7 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.19.1
+Version:	0.19.3
 Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
@@ -24,7 +24,6 @@ Source3:	git-version-gen
 Source100:	%{name}.rpmlintrc
 # KDE example comes from 2003, it's really useless now
 Patch0:		gettext-0.19.1-drop-kde-example.patch
-Patch11:	gettext-0.18.1.1-parallel.patch
 Patch14:	gettext-0.18.1.1-stdio-gets.patch
 
 BuildRequires:	bison
