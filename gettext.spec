@@ -13,7 +13,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.19.3
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -139,7 +139,7 @@ Requires:	%{libasprintf} = %{version}-%{release}
 Requires:	%{libgettextmisc} = %{version}-%{release}
 Requires:	%{libintl} = %{version}-%{release}
 %if %{with uclibc}
-Requires:	uclibc-%{libintl} = %{version}-%{release}
+#Requires:	uclibc-%{libintl} = %{version}-%{release}
 %endif
 
 # fwang: autopoint requires cvs to work
@@ -216,7 +216,7 @@ for i in `find -name configure|sort`
 do
 pushd `dirname $i`
 CONFIGURE_TOP=. \
-%configure2_5x \
+%configure \
 	--disable-static \
 	--disable-rpath \
 	--enable-shared \
