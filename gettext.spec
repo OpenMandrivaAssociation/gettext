@@ -111,7 +111,7 @@ Requires:	%{name}-devel = %{EVRD}
 Requires:	uclibc-%{libintl} = %{version}-%{release}
 Conflicts:	%{name}-devel < 0.19.4-3
 
-%description uclibc-%{name}-devel
+%description -n uclibc-%{name}-devel
 This package contains all development related files necessary for
 developing or compiling applications/libraries that needs
 internationalization capability. You also need this package if you
