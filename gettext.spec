@@ -13,7 +13,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.19.4
-Release:	2
+Release:	3
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -56,6 +56,8 @@ BuildRequires:	fastjar
 %endif
 %if %{with uclibc}
 BuildRequires:	uClibc-devel >= 0.9.33.2-15
+BuildRequires:	uclibc-ncurses-devel
+BuildRequires:	uclibc-acl-devel
 %endif
 
 Requires:	%{name}-base = %{version}-%{release}
@@ -100,6 +102,20 @@ License:	LGPL
 %description -n	uclibc-%{libintl}
 This package contains a uClibc linked version of the libintl library, which is
 important for system internationalization.
+
+%package -n	uclibc-%{name}-devel
+Summary:	Development files for %{name}
+Group:		Development/C
+License:	LGPL
+Requires:	%{name}-devel = %{EVRD}
+Requires:	uclibc-%{libintl} = %{version}-%{release}
+Conflicts:	%{name}-devel < 0.19.4-3
+
+%description uclibc-%{name}-devel
+This package contains all development related files necessary for
+developing or compiling applications/libraries that needs
+internationalization capability. You also need this package if you
+want to add gettext support for your project.
 %endif
 
 %package -n	%{libasprintf}
@@ -138,14 +154,8 @@ Requires:	%{libgettextpo} = %{version}-%{release}
 Requires:	%{libasprintf} = %{version}-%{release}
 Requires:	%{libgettextmisc} = %{version}-%{release}
 Requires:	%{libintl} = %{version}-%{release}
-%if %{with uclibc}
-#Requires:	uclibc-%{libintl} = %{version}-%{release}
-%endif
 
-# fwang: autopoint requires cvs to work
-Requires:	cvs
-
-%description devel
+%description	devel
 This package contains all development related files necessary for
 developing or compiling applications/libraries that needs
 internationalization capability. You also need this package if you
@@ -352,6 +362,10 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %if %{with uclibc}
 %files -n uclibc-%{libintl}
 %{uclibc_root}/%{_lib}/libintl.so.%{intl_major}*
+
+%files -n uclibc-%{name}-devel
+%{uclibc_root}%{_libdir}/libintl.a
+%{uclibc_root}%{_libdir}/libintl.so
 %endif
 
 %files -n %{libasprintf}
@@ -384,10 +398,6 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %{_libdir}/libgettextpo.so
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
-%if %{with uclibc}
-%{uclibc_root}%{_libdir}/libintl.a
-%{uclibc_root}%{_libdir}/libintl.so
-%endif
 %{_mandir}/man1/autopoint.*
 %{_mandir}/man3/*
 
