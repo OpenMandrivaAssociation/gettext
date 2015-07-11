@@ -12,12 +12,12 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.19.4
-Release:	3
+Version:	0.19.5
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
-Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.xz
 Source2:	po-mode-init.el
 # Missing in 0.19.1 tarball
 Source3:	git-version-gen
