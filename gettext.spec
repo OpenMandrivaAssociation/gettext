@@ -335,6 +335,7 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %{_datadir}/%{name}/javaversion.class
 %{_datadir}/%{name}/styles
 %dir %{_libdir}/%{name}
+%{_libdir}/%{name}/cldr-plurals
 %{_libdir}/%{name}/hostname
 %{_libdir}/%{name}/project-id
 %{_libdir}/%{name}/urlget
