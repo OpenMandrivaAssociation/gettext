@@ -5,11 +5,12 @@
 %define libgettextpo %mklibname gettextpo %{major}
 %define libgettextmisc %mklibname gettextmisc
 %define _disable_lto 1
+%define _disable_rebuild_configure 1
 
 %bcond_with	check
 %bcond_with	java
 %bcond_with	csharp
-%bcond_without	uclibc
+%bcond_with	uclibc
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
