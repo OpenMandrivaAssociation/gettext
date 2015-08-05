@@ -4,6 +4,7 @@
 %define libasprintf %mklibname asprintf %{major}
 %define libgettextpo %mklibname gettextpo %{major}
 %define libgettextmisc %mklibname gettextmisc
+%define _disable_lto 1
 
 %bcond_with	check
 %bcond_with	java
@@ -12,12 +13,12 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.19.5
-Release:	2
+Version:	0.19.5.1
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
-Source0:	ftp://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.xz
+Source0:	http://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.xz
 Source2:	po-mode-init.el
 # Missing in 0.19.1 tarball
 Source3:	git-version-gen

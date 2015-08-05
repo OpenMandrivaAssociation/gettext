@@ -1,2 +1,4 @@
-sources:
+removed_sources:
   gettext-0.19.5.tar.xz: bfe50a885076a24d63b9d9b242a409cc16727d24
+sources:
+  gettext-0.19.5.1.tar.xz: 668562227972d2645ac6c5930448ba74df65a53f
