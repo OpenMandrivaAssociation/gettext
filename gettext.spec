@@ -7,14 +7,13 @@
 %define _disable_lto 1
 %define _disable_rebuild_configure 1
 
-%bcond_with	check
-%bcond_with	java
-%bcond_with	csharp
-%bcond_with	uclibc
+%bcond_with check
+%bcond_with java
+%bcond_with csharp
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.19.7
+Version:	0.19.8
 Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
@@ -56,11 +55,6 @@ BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
 BuildRequires:	fastjar
 %endif
-%if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-15
-BuildRequires:	uclibc-ncurses-devel
-BuildRequires:	uclibc-acl-devel
-%endif
 
 Requires:	%{name}-base = %{version}-%{release}
 Requires:	%{libgettextmisc} = %{version}-%{release}
@@ -94,31 +88,6 @@ Provides:	libintl = %{version}-%{release}
 %description -n	%{libintl}
 This package contains the libintl library, which is important for
 system internationalization.
-
-%if %{with uclibc}
-%package -n	uclibc-%{libintl}
-Summary:	Basic libintl library for internationalization linked against uClibc
-Group:		System/Libraries
-License:	LGPL
-
-%description -n	uclibc-%{libintl}
-This package contains a uClibc linked version of the libintl library, which is
-important for system internationalization.
-
-%package -n	uclibc-%{name}-devel
-Summary:	Development files for %{name}
-Group:		Development/C
-License:	LGPL
-Requires:	%{name}-devel = %{EVRD}
-Requires:	uclibc-%{libintl} = %{version}-%{release}
-Conflicts:	%{name}-devel < 0.19.4-3
-
-%description -n uclibc-%{name}-devel
-This package contains all development related files necessary for
-developing or compiling applications/libraries that needs
-internationalization capability. You also need this package if you
-want to add gettext support for your project.
-%endif
 
 %package -n	%{libasprintf}
 Summary:	%{name} libasprintf needed by %{name} utilities
@@ -211,19 +180,6 @@ export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
 
-%if %{with uclibc}
-mkdir -p gettext-tools/uclibc
-pushd gettext-tools/uclibc
-CONFIGURE_TOP=.. \
-%uclibc_configure \
-		--enable-shared \
-		--enable-static \
-		--with-included-gettext \
-		--libdir=%{uclibc_root}/%{_lib}
-%make -C intl
-popd
-%endif
-
 for i in `find -name configure|sort`
 do
 pushd `dirname $i`
@@ -255,14 +211,6 @@ LC_ALL=C make check
 
 %install
 %makeinstall_std
-
-%if %{with uclibc}
-%makeinstall_std -C gettext-tools/uclibc/intl
-rm -f %{buildroot}%{uclibc_root}/%{_lib}/libintl.so
-mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
-ln -srf %{buildroot}%{uclibc_root}/%{_lib}/libintl.so.%{intl_major}.*.* %{buildroot}%{uclibc_root}%{_libdir}/libintl.so
-mv %{buildroot}%{uclibc_root}/%{_lib}/libintl.a %{buildroot}%{uclibc_root}%{_libdir}/libintl.a
-%endif
 
 # remove unwanted files
 rm -f %{buildroot}%{_includedir}/libintl.h \
@@ -314,12 +262,9 @@ done
 %find_lang %{name} --all-name
 
 # For some reason, the post scripts fail to do this
-#strip --strip-unneeded %buildroot/%_lib/libintl.so.8.* 
+#strip --strip-unneeded %buildroot/%_lib/libintl.so.8.*
 %define strip_boot %{_target_platform}-strip
-%{strip_boot} --strip-unneeded %buildroot/%_lib/libintl.so.8.*
-%if %{with uclibc}
-strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
-%endif
+%{strip_boot} --strip-unneeded %{buildroot}/%{_lib}/libintl.so.%{intl_major}.*
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS 
@@ -363,15 +308,6 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 
 %files -n %{libintl}
 /%{_lib}/libintl.so.%{intl_major}*
-
-%if %{with uclibc}
-%files -n uclibc-%{libintl}
-%{uclibc_root}/%{_lib}/libintl.so.%{intl_major}*
-
-%files -n uclibc-%{name}-devel
-%{uclibc_root}%{_libdir}/libintl.a
-%{uclibc_root}%{_libdir}/libintl.so
-%endif
 
 %files -n %{libasprintf}
 %{_libdir}/libasprintf.so.%{major}*
@@ -419,4 +355,3 @@ strip --strip-unneeded %buildroot%_prefix/uclibc/%_lib/libintl.so.8.*
 %{_libdir}/*.dll
 %{_libdir}/gettext/*.exe
 %endif
-
