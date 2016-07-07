@@ -1,4 +1,4 @@
-%define intl_major 9
+%define intl_major 8
 %define extpo_major 1
 %define major 0
 %define libintl %mklibname intl %{intl_major}
