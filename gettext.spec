@@ -1,5 +1,5 @@
 %define intl_major 8
-%define extpo_major 1
+%define extpo_major 0
 %define major 0
 %define libintl %mklibname intl %{intl_major}
 %define libasprintf %mklibname asprintf %{major}
@@ -280,8 +280,8 @@ done
 %{_datadir}/%{name}/projects
 %{_datadir}/%{name}/javaversion.class
 %{_datadir}/%{name}/styles
-%dir %{_datadir}/%{name}-%{version}
-%{_datadir}/%{name}-%{version}/its
+%dir %{_datadir}/%{name}-0.19.8
+%{_datadir}/%{name}-0.19.8/its
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/cldr-plurals
 %{_libdir}/%{name}/hostname
