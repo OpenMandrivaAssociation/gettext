@@ -6,6 +6,9 @@
 %define libgettextpo %mklibname gettextpo %{extpo_major}
 %define libgettextmisc %mklibname gettextmisc
 %define _disable_rebuild_configure 1
+# (tpg) still does not compile 2016-12-27
+# /tmp/lto-llvm-b530a1.o:ld-temp.o:function rpl_log10: error: undefined reference to 'log10'
+%define _disable_lto 1
 
 # (tpg) optimize it a bit
 %global optflags %optflags -O3
