@@ -5,8 +5,10 @@
 %define libasprintf %mklibname asprintf %{major}
 %define libgettextpo %mklibname gettextpo %{extpo_major}
 %define libgettextmisc %mklibname gettextmisc
-%define _disable_lto 1
 %define _disable_rebuild_configure 1
+
+# (tpg) optimize it a bit
+%global optflags %optflags -O3
 
 %bcond_with check
 %bcond_with java
@@ -15,7 +17,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.19.8.1
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -268,7 +270,7 @@ done
 %{strip_boot} --strip-unneeded %{buildroot}/%{_lib}/libintl.so.%{intl_major}.*
 
 %files
-%doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS 
+%doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS
 %config(noreplace) %{_sysconfdir}/emacs/site-start.d/*.el
 %{_bindir}/envsubst
 %{_bindir}/gettext.sh
