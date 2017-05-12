@@ -20,7 +20,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.19.8.1
-Release:	2
+Release:	3
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -195,6 +195,7 @@ CONFIGURE_TOP=. \
 	--disable-rpath \
 	--enable-shared \
 	--with-included-gettext \
+	--enable-openmp \
 %if %{with csharp}
 	--enable-csharp=mono \
 %else
