@@ -20,7 +20,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.19.8.1
-Release:	3
+Release:	4
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -189,7 +189,13 @@ export JAR="%{_bindir}/fastjar"
 for i in `find -name configure|sort`
 do
 pushd `dirname $i`
+# ARM -fuse-ld=bfd addition is a workaround for a crash in
+# ARM32 ld.gold when linking clang++ code.
+# FIXME remove when binutils is fixed.
 CONFIGURE_TOP=. \
+%ifarch %{arm}
+CXXFLAGS="%{optflags} -fuse-ld=bfd" \
+%endif
 %configure \
 	--disable-static \
 	--disable-rpath \
