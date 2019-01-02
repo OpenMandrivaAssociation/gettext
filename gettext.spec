@@ -10,8 +10,8 @@
 # /tmp/lto-llvm-b530a1.o:ld-temp.o:function rpl_log10: error: undefined reference to 'log10'
 %define _disable_lto 1
 
-# (tpg) optimize it a bit
-%global optflags %optflags -O3
+# (tpg) optimize it a bit, even with polly
+%global optflags %optflags -O3 -mllvm -polly -mllvm -polly-vectorizer=stripmine -mllvm -polly-parallel
 
 %bcond_with check
 %bcond_with java
