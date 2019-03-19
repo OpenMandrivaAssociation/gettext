@@ -35,7 +35,6 @@ Patch14:	gettext-0.19.5-stdio-gets.patch
 
 BuildRequires:	bison
 BuildRequires:	chrpath
-BuildRequires:	emacs-nox
 BuildRequires:	flex
 BuildRequires:	texinfo
 BuildRequires:	acl-devel
@@ -304,7 +303,8 @@ done
 %exclude %{_libdir}/%{name}/gnu.gettext.*
 %endif
 %{_infodir}/gettext.*
-%{_datadir}/emacs/site-lisp/*.el*
+# now it's separate package
+#% {_datadir}/emacs/site-lisp/*.el*
 %{_mandir}/man1/envsubst.*
 %{_mandir}/man1/msg*
 %{_mandir}/man1/xgettext.*
