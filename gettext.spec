@@ -31,6 +31,7 @@ Source3:	git-version-gen
 Source100:	%{name}.rpmlintrc
 # KDE example comes from 2003, it's really useless now
 Patch0:		gettext-0.19.1-drop-kde-example.patch
+Patch1:		gettext-0.19.8.1-format-security.patch
 Patch14:	gettext-0.19.5-stdio-gets.patch
 
 BuildRequires:	bison
