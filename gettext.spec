@@ -6,9 +6,6 @@
 %define libgettextpo %mklibname gettextpo %{extpo_major}
 %define libgettextmisc %mklibname gettextmisc
 %define _disable_rebuild_configure 1
-# (tpg) still does not compile 2016-12-27
-# /tmp/lto-llvm-b530a1.o:ld-temp.o:function rpl_log10: error: undefined reference to 'log10'
-%define _disable_lto 1
 
 # (tpg) optimize it a bit
 %global optflags %optflags -O3
@@ -19,8 +16,8 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.19.8.1
-Release:	6
+Version:	0.20.0
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -172,8 +169,7 @@ into C# dll or resource files.
 %endif
 
 %prep
-%setup -q
-%apply_patches
+%autosetup -p1
 install -m 755 %{SOURCE3} build-aux/
 
 autoreconf -fi
@@ -214,7 +210,7 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 popd
 done
 
-%make
+%make_build
 
 %if %{with check}
 %check
@@ -223,7 +219,7 @@ LC_ALL=C make check
 %endif
 
 %install
-%makeinstall_std
+%make_install
 
 # remove unwanted files
 rm -f %{buildroot}%{_includedir}/libintl.h \
