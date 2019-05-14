@@ -8,7 +8,7 @@
 %define _disable_rebuild_configure 1
 
 # (tpg) optimize it a bit
-%global optflags %optflags -O3
+%global optflags %optflags -O3 --rtlib=compiler-rt
 
 %bcond_with check
 %bcond_with java
@@ -29,7 +29,7 @@ Source100:	%{name}.rpmlintrc
 # KDE example comes from 2003, it's really useless now
 Patch0:		gettext-0.19.1-drop-kde-example.patch
 Patch14:	gettext-0.19.5-stdio-gets.patch
-
+Patch15:	gettext-0.20-check-for-__builtin_mul_overflow_p.patch
 BuildRequires:	bison
 BuildRequires:	chrpath
 BuildRequires:	flex

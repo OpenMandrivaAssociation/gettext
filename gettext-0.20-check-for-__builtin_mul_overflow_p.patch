@@ -1,0 +1,153 @@
+diff -Naur gettext-0.20/configure.ac gettext-0.20.tpg/configure.ac
+--- gettext-0.20/configure.ac	2019-04-02 15:54:47.000000000 +0000
++++ gettext-0.20.tpg/configure.ac	2019-05-14 15:15:59.043026435 +0000
+@@ -37,6 +37,18 @@
+ 
+ dnl Checks for library functions.
+ 
++AC_CACHE_CHECK([for gcc 7-compatible __builtin_mul_overflow_p],
++  [utils_cv_builtin_mul_overflow_p],
++  [AC_COMPILE_IFELSE(
++    [AC_LANG_PROGRAM(
++      [[]],
++      [[return __builtin_mul_overflow_p(1, 2, 3);]])],
++    [utils_cv_builtin_mul_overflow_p=yes],
++    [utils_cv_builtin_mul_overflow_p=no])])
++if test $utils_cv_builtin_mul_overflow_p = yes; then
++  AC_DEFINE([HAVE_BUILTIN_MUL_OVERFLOW_P], [1], [Define if your compiler supports __builtin_mul_overflow_p])
++fi
++
+ AC_CONFIG_SUBDIRS([gettext-runtime libtextstyle gettext-tools])
+ 
+ AM_EXTRA_RECURSIVE_TARGETS([maintainer-update-po])
+diff -Naur gettext-0.20/gettext-runtime/gnulib-lib/intprops.h gettext-0.20.tpg/gettext-runtime/gnulib-lib/intprops.h
+--- gettext-0.20/gettext-runtime/gnulib-lib/intprops.h	2019-01-06 12:16:15.000000000 +0000
++++ gettext-0.20.tpg/gettext-runtime/gnulib-lib/intprops.h	2019-05-14 15:23:55.504029119 +0000
+@@ -227,14 +227,11 @@
+ # define _GL_HAS_BUILTIN_OVERFLOW 0
+ #endif
+ 
+-/* True if __builtin_add_overflow_p (A, B, C) works.  */
+-#define _GL_HAS_BUILTIN_OVERFLOW_P (7 <= __GNUC__)
+-
+ /* The _GL*_OVERFLOW macros have the same restrictions as the
+    *_RANGE_OVERFLOW macros, except that they do not assume that operands
+    (e.g., A and B) have the same type as MIN and MAX.  Instead, they assume
+    that the result (e.g., A + B) has that type.  */
+-#if _GL_HAS_BUILTIN_OVERFLOW_P
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define _GL_ADD_OVERFLOW(a, b, min, max)                               \
+    __builtin_add_overflow_p (a, b, (__typeof__ ((a) + (b))) 0)
+ # define _GL_SUBTRACT_OVERFLOW(a, b, min, max)                          \
+diff -Naur gettext-0.20/gettext-runtime/gnulib-lib/xalloc-oversized.h gettext-0.20.tpg/gettext-runtime/gnulib-lib/xalloc-oversized.h
+--- gettext-0.20/gettext-runtime/gnulib-lib/xalloc-oversized.h	2019-01-06 12:16:16.000000000 +0000
++++ gettext-0.20.tpg/gettext-runtime/gnulib-lib/xalloc-oversized.h	2019-05-14 15:21:00.730028135 +0000
+@@ -41,7 +41,7 @@
+    positive and N must be nonnegative.  This is a macro, not a
+    function, so that it works correctly even when SIZE_MAX < N.  */
+ 
+-#if 7 <= __GNUC__
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define xalloc_oversized(n, s) \
+    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
+ #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
+diff -Naur gettext-0.20/gettext-tools/gnulib-lib/intprops.h gettext-0.20.tpg/gettext-tools/gnulib-lib/intprops.h
+--- gettext-0.20/gettext-tools/gnulib-lib/intprops.h	2019-01-06 12:17:04.000000000 +0000
++++ gettext-0.20.tpg/gettext-tools/gnulib-lib/intprops.h	2019-05-14 15:26:27.335029974 +0000
+@@ -227,14 +227,11 @@
+ # define _GL_HAS_BUILTIN_OVERFLOW 0
+ #endif
+ 
+-/* True if __builtin_add_overflow_p (A, B, C) works.  */
+-#define _GL_HAS_BUILTIN_OVERFLOW_P (7 <= __GNUC__)
+-
+ /* The _GL*_OVERFLOW macros have the same restrictions as the
+    *_RANGE_OVERFLOW macros, except that they do not assume that operands
+    (e.g., A and B) have the same type as MIN and MAX.  Instead, they assume
+    that the result (e.g., A + B) has that type.  */
+-#if _GL_HAS_BUILTIN_OVERFLOW_P
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define _GL_ADD_OVERFLOW(a, b, min, max)                               \
+    __builtin_add_overflow_p (a, b, (__typeof__ ((a) + (b))) 0)
+ # define _GL_SUBTRACT_OVERFLOW(a, b, min, max)                          \
+diff -Naur gettext-0.20/gettext-tools/gnulib-lib/xalloc-oversized.h gettext-0.20.tpg/gettext-tools/gnulib-lib/xalloc-oversized.h
+--- gettext-0.20/gettext-tools/gnulib-lib/xalloc-oversized.h	2019-01-06 12:17:07.000000000 +0000
++++ gettext-0.20.tpg/gettext-tools/gnulib-lib/xalloc-oversized.h	2019-05-14 15:25:42.832029724 +0000
+@@ -41,7 +41,7 @@
+    positive and N must be nonnegative.  This is a macro, not a
+    function, so that it works correctly even when SIZE_MAX < N.  */
+ 
+-#if 7 <= __GNUC__
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define xalloc_oversized(n, s) \
+    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
+ #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
+diff -Naur gettext-0.20/gettext-tools/libgettextpo/intprops.h gettext-0.20.tpg/gettext-tools/libgettextpo/intprops.h
+--- gettext-0.20/gettext-tools/libgettextpo/intprops.h	2019-01-06 12:17:59.000000000 +0000
++++ gettext-0.20.tpg/gettext-tools/libgettextpo/intprops.h	2019-05-14 15:25:07.293029523 +0000
+@@ -227,14 +227,11 @@
+ # define _GL_HAS_BUILTIN_OVERFLOW 0
+ #endif
+ 
+-/* True if __builtin_add_overflow_p (A, B, C) works.  */
+-#define _GL_HAS_BUILTIN_OVERFLOW_P (7 <= __GNUC__)
+-
+ /* The _GL*_OVERFLOW macros have the same restrictions as the
+    *_RANGE_OVERFLOW macros, except that they do not assume that operands
+    (e.g., A and B) have the same type as MIN and MAX.  Instead, they assume
+    that the result (e.g., A + B) has that type.  */
+-#if _GL_HAS_BUILTIN_OVERFLOW_P
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define _GL_ADD_OVERFLOW(a, b, min, max)                               \
+    __builtin_add_overflow_p (a, b, (__typeof__ ((a) + (b))) 0)
+ # define _GL_SUBTRACT_OVERFLOW(a, b, min, max)                          \
+diff -Naur gettext-0.20/gettext-tools/libgettextpo/xalloc-oversized.h gettext-0.20.tpg/gettext-tools/libgettextpo/xalloc-oversized.h
+--- gettext-0.20/gettext-tools/libgettextpo/xalloc-oversized.h	2019-01-06 12:18:00.000000000 +0000
++++ gettext-0.20.tpg/gettext-tools/libgettextpo/xalloc-oversized.h	2019-05-14 15:24:27.165029297 +0000
+@@ -41,7 +41,7 @@
+    positive and N must be nonnegative.  This is a macro, not a
+    function, so that it works correctly even when SIZE_MAX < N.  */
+ 
+-#if 7 <= __GNUC__
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define xalloc_oversized(n, s) \
+    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
+ #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
+diff -Naur gettext-0.20/gettext-tools/libgrep/intprops.h gettext-0.20.tpg/gettext-tools/libgrep/intprops.h
+--- gettext-0.20/gettext-tools/libgrep/intprops.h	2019-01-06 12:17:45.000000000 +0000
++++ gettext-0.20.tpg/gettext-tools/libgrep/intprops.h	2019-05-14 15:27:24.017030293 +0000
+@@ -227,14 +227,11 @@
+ # define _GL_HAS_BUILTIN_OVERFLOW 0
+ #endif
+ 
+-/* True if __builtin_add_overflow_p (A, B, C) works.  */
+-#define _GL_HAS_BUILTIN_OVERFLOW_P (7 <= __GNUC__)
+-
+ /* The _GL*_OVERFLOW macros have the same restrictions as the
+    *_RANGE_OVERFLOW macros, except that they do not assume that operands
+    (e.g., A and B) have the same type as MIN and MAX.  Instead, they assume
+    that the result (e.g., A + B) has that type.  */
+-#if _GL_HAS_BUILTIN_OVERFLOW_P
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define _GL_ADD_OVERFLOW(a, b, min, max)                               \
+    __builtin_add_overflow_p (a, b, (__typeof__ ((a) + (b))) 0)
+ # define _GL_SUBTRACT_OVERFLOW(a, b, min, max)                          \
+diff -Naur gettext-0.20/libtextstyle/lib/intprops.h gettext-0.20.tpg/libtextstyle/lib/intprops.h
+--- gettext-0.20/libtextstyle/lib/intprops.h	2019-03-11 19:40:29.000000000 +0000
++++ gettext-0.20.tpg/libtextstyle/lib/intprops.h	2019-05-14 15:28:02.601030511 +0000
+@@ -227,14 +227,11 @@
+ # define _GL_HAS_BUILTIN_OVERFLOW 0
+ #endif
+ 
+-/* True if __builtin_add_overflow_p (A, B, C) works.  */
+-#define _GL_HAS_BUILTIN_OVERFLOW_P (7 <= __GNUC__)
+-
+ /* The _GL*_OVERFLOW macros have the same restrictions as the
+    *_RANGE_OVERFLOW macros, except that they do not assume that operands
+    (e.g., A and B) have the same type as MIN and MAX.  Instead, they assume
+    that the result (e.g., A + B) has that type.  */
+-#if _GL_HAS_BUILTIN_OVERFLOW_P
++#ifdef HAVE_BUILTIN_MUL_OVERFLOW_P
+ # define _GL_ADD_OVERFLOW(a, b, min, max)                               \
+    __builtin_add_overflow_p (a, b, (__typeof__ ((a) + (b))) 0)
+ # define _GL_SUBTRACT_OVERFLOW(a, b, min, max)                          \
