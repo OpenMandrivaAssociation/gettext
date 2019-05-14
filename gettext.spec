@@ -8,7 +8,7 @@
 %define _disable_rebuild_configure 1
 
 # (tpg) optimize it a bit
-%global optflags %optflags -O3 --rtlib=compiler-rt
+%global optflags %{optflags} -O3 --rtlib=compiler-rt
 
 %bcond_with check
 %bcond_with java
@@ -183,9 +183,10 @@ export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
 
-for i in `find -name configure|sort`
+export LIBS="-lm"
+for i in $(find -name configure|sort)
 do
-pushd `dirname $i`
+cd $(dirname $i)
 # ARM -fuse-ld=bfd addition is a workaround for a crash in
 # ARM32 ld.gold when linking clang++ code.
 # FIXME remove when binutils is fixed.
@@ -208,7 +209,7 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--disable-java \
 %endif
 
-popd
+cd -
 done
 
 %make_build
