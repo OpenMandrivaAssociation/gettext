@@ -30,6 +30,7 @@ Source100:	%{name}.rpmlintrc
 Patch0:		gettext-0.19.1-drop-kde-example.patch
 Patch14:	gettext-0.19.5-stdio-gets.patch
 Patch15:	gettext-0.20-check-for-__builtin_mul_overflow_p.patch
+
 BuildRequires:	bison
 BuildRequires:	chrpath
 BuildRequires:	flex
@@ -169,6 +170,7 @@ into C# dll or resource files.
 
 %prep
 %autosetup -p1
+
 install -m 755 %{SOURCE3} build-aux/
 
 autoreconf -fi
