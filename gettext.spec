@@ -339,7 +339,6 @@ done
 %{_datadir}/%{name}/archive*
 %{_datadir}/%{name}/config.rpath
 %{_datadir}/%{name}/*.h
-%{_datadir}/%{name}/intl
 %{_datadir}/%{name}/po
 %{_datadir}/aclocal/*
 %{_includedir}/*
