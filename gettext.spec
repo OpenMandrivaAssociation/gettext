@@ -290,8 +290,8 @@ done
 %{_datadir}/%{name}/projects
 %{_datadir}/%{name}/javaversion.class
 %{_datadir}/%{name}/styles
-%dir %{_datadir}/%{name}-0.19.8
-%{_datadir}/%{name}-0.19.8/its
+%dir %{_datadir}/%{name}-0.20
+%{_datadir}/%{name}-0.20/its
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/cldr-plurals
 %{_libdir}/%{name}/hostname
