@@ -5,6 +5,7 @@
 %define libasprintf %mklibname asprintf %{major}
 %define libgettextpo %mklibname gettextpo %{extpo_major}
 %define libgettextmisc %mklibname gettextmisc
+%define libtextstyle %mklibname textstyle %{major}
 %define _disable_rebuild_configure 1
 
 # (tpg) optimize it a bit
@@ -59,8 +60,8 @@ BuildRequires:	gcj-tools
 BuildRequires:	fastjar
 %endif
 
-Requires:	%{name}-base = %{version}-%{release}
-Requires:	%{libgettextmisc} = %{version}-%{release}
+Requires:	%{name}-base = %{EVRD}
+Requires:	%{libgettextmisc} = %{EVRD}
 # xgettext will dlopen() it when extracting strings from glade files
 Requires:	%mklibname expat 1
 
@@ -86,7 +87,7 @@ Build Option:
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
-Provides:	libintl = %{version}-%{release}
+Provides:	libintl = %{EVRD}
 
 %description -n	%{libintl}
 This package contains the libintl library, which is important for
@@ -110,6 +111,14 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n	%{libgettextpo}
 This package contains libgettextpo shared library.
 
+%package -n	%{libtextstyle}
+Summary:	%{name} libtextstyle needed by %{name} utilities
+Group:		System/Libraries
+License:	LGPL
+
+%description -n	%{libtextstyle}
+This package contains libtextstyle shared library.
+
 %package -n	%{libgettextmisc}
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
@@ -123,11 +132,12 @@ and are not very widely used outside %{name}.
 Summary:	Development files for %{name}
 Group:		Development/C
 License:	LGPL
-Requires:	%{name} = %{version}-%{release}
-Requires:	%{libgettextpo} = %{version}-%{release}
-Requires:	%{libasprintf} = %{version}-%{release}
-Requires:	%{libgettextmisc} = %{version}-%{release}
-Requires:	%{libintl} = %{version}-%{release}
+Requires:	%{name} = %{EVRD}
+Requires:	%{libgettextpo} = %{EVRD}
+Requires:	%{libasprintf} = %{EVRD}
+Requires:	%{libgettextmisc} = %{EVRD}
+Requires:	%{libintl} = %{EVRD}
+Requires:	%{libtextstyle} = %{EVRD}
 
 %description	devel
 This package contains all development related files necessary for
@@ -138,7 +148,7 @@ want to add gettext support for your project.
 %package	base
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
-Requires:	%{libintl} = %{version}-%{release}
+Requires:	%{libintl} = %{EVRD}
 
 %description	base
 This package contains the basic binary from %{name}. It is splitted from
@@ -264,7 +274,7 @@ rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
 %endif
 
 # cleanup rpaths
-for i in %{buildroot}%{_bindir}/* `find %{buildroot}%{_libdir} -type f`; do
+for i in %{buildroot}%{_bindir}/* $(find %{buildroot}%{_libdir} -type f); do
     if file $i | grep "ELF 64-bit" >/dev/null; then
 	chrpath -l $i && chrpath --delete $i
     fi
@@ -331,8 +341,12 @@ done
 %{_libdir}/libgettextlib-*.so
 %{_libdir}/libgettextsrc-*.so
 
+%files -n %{libtextstyle}
+%{_libdir}/libtextstyle.so.%{major}*
+
 %files devel
 %doc gettext-runtime/man/*.3.html examples htmldoc
+%doc %{_docdir}/libtextstyle
 %{_bindir}/autopoint
 %{_bindir}/gettextize
 %{_datadir}/%{name}/ABOUT-NLS
@@ -343,6 +357,7 @@ done
 %{_datadir}/aclocal/*
 %{_includedir}/*
 %{_infodir}/autosprintf*
+%{_infodir}/libtextstyle*
 # "lib*.so" cannot be used (it should be 'lib[^\.]*\.so' regexp in fact
 # but using regexp is not possible here; so we list all files manually
 %{_libdir}/libasprintf.so
@@ -350,6 +365,7 @@ done
 %{_libdir}/libgettextpo.so
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
+%{_libdir}/libtextstyle.so
 %{_mandir}/man1/autopoint.*
 %{_mandir}/man3/*
 
