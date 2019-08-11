@@ -9,7 +9,9 @@
 %define _disable_rebuild_configure 1
 
 # (tpg) optimize it a bit
+%ifnarch %{riscv}
 %global optflags %{optflags} -O3 --rtlib=compiler-rt
+%endif
 
 %bcond_with check
 %bcond_with java
