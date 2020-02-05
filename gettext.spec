@@ -33,6 +33,7 @@ Source100:	%{name}.rpmlintrc
 Patch0:		gettext-0.19.1-drop-kde-example.patch
 Patch14:	gettext-0.19.5-stdio-gets.patch
 Patch15:	gettext-0.20-check-for-__builtin_mul_overflow_p.patch
+Patch16:	cr-statement.c-timsort.h-fix-formatting-issues.patch
 
 BuildRequires:	bison
 BuildRequires:	chrpath
