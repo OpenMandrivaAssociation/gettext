@@ -292,7 +292,7 @@ done
 # For some reason, the post scripts fail to do this
 #strip --strip-unneeded %buildroot/%_lib/libintl.so.8.*
 %define strip_boot %{_target_platform}-strip
-%{strip_boot} --strip-unneeded %{buildroot}%{_libdir}}/libintl.so.%{intl_major}.*
+%{strip_boot} --strip-unneeded %{buildroot}%{_libdir}/libintl.so.%{intl_major}.*
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS
