@@ -20,7 +20,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.20.1
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -42,7 +42,7 @@ BuildRequires:	texinfo
 BuildRequires:	acl-devel
 BuildRequires:	gomp-devel
 BuildRequires:	libunistring-devel
-#BuildRequires:	pkgconfig(libcroco-0.6)
+BuildRequires:	pkgconfig(libcroco-0.6)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
 %if %with check
@@ -65,8 +65,6 @@ BuildRequires:	fastjar
 
 Requires:	%{name}-base = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
-# xgettext will dlopen() it when extracting strings from glade files
-Requires:	%mklibname expat 1
 
 %description
 The GNU gettext package provides a set of tools and documentation for producing
@@ -86,40 +84,40 @@ Build Option:
 --with csharp          Enables C# support in gettext
 --without java         Disables Java support in gettext
 
-%package -n	%{libintl}
+%package -n %{libintl}
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
 Provides:	libintl = %{EVRD}
 
-%description -n	%{libintl}
+%description -n %{libintl}
 This package contains the libintl library, which is important for
 system internationalization.
 
-%package -n	%{libasprintf}
+%package -n %{libasprintf}
 Summary:	%{name} libasprintf needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
 Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 
-%description -n	%{libasprintf}
+%description -n %{libasprintf}
 This package contains libasprintf shared library.
 
-%package -n	%{libgettextpo}
+%package -n %{libgettextpo}
 Summary:	%{name} libgettextpo needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
 Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 
-%description -n	%{libgettextpo}
+%description -n %{libgettextpo}
 This package contains libgettextpo shared library.
 
-%package -n	%{libtextstyle}
+%package -n %{libtextstyle}
 Summary:	%{name} libtextstyle needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
 
-%description -n	%{libtextstyle}
+%description -n %{libtextstyle}
 This package contains libtextstyle shared library.
 
 %package -n	%{libgettextmisc}
@@ -127,11 +125,11 @@ Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
 
-%description -n	%{libgettextmisc}
+%description -n %{libgettextmisc}
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
-%package	devel
+%package devel
 Summary:	Development files for %{name}
 Group:		Development/C
 License:	LGPL
@@ -142,40 +140,40 @@ Requires:	%{libgettextmisc} = %{EVRD}
 Requires:	%{libintl} = %{EVRD}
 Requires:	%{libtextstyle} = %{EVRD}
 
-%description	devel
+%description devel
 This package contains all development related files necessary for
 developing or compiling applications/libraries that needs
 internationalization capability. You also need this package if you
 want to add gettext support for your project.
 
-%package	base
+%package base
 Summary:	Basic binary for showing translation of textual messages
 Group:		System/Internationalization
 Requires:	%{libintl} = %{EVRD}
 
-%description	base
+%description base
 This package contains the basic binary from %{name}. It is splitted from
 %{name} because initscript need it to show translated boot messages.
 
 %if %{with java}
-%package	java
+%package java
 Summary:	Java binding for GNU gettext
 Group:		System/Internationalization
 Requires:	%{name} = %{version}
 
-%description	java
+%description java
 This package contains class file that implements the main GNU libintl
 functions in Java. This allows compiling GNU gettext message catalogs
 into Java ResourceBundle classes.
 %endif
 
 %if %{with csharp}
-%package	csharp
+%package csharp
 Summary:	C# binding for GNU gettext
 Group:		System/Internationalization
 Requires:	mono
 
-%description	csharp
+%description csharp
 This package contains class file that implements the main GNU libintl
 functions in C#. This allows compiling GNU gettext message catalogs
 into C# dll or resource files.
@@ -183,6 +181,14 @@ into C# dll or resource files.
 
 %prep
 %autosetup -p1
+
+# Defeat libtextstyle attempt to bundle libcroco and libxml2.  The comments
+# indicate this is done because the libtextstyle authors do not want
+# applications using their code to suffer startup delays due to the
+# relocations in the two libraries.  This is not a sufficient reason for Fedora.
+sed -e 's/\(gl_cv_libcroco_force_included=\)yes/\1no/' \
+    -e 's/\(gl_cv_libxml_force_included=\)yes/\1no/' \
+    -i libtextstyle/configure
 
 install -m 755 %{SOURCE3} build-aux/
 
@@ -196,7 +202,12 @@ export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
 
-export LIBS="-lm"
+# Ours libcroco-devel has an extra "libcroco" path component, and the
+# libxml2-devel package has an extra "libxml2" path component.
+export CPPFLAGS="-I$(ls -1d %{_includedir}/libcroco-*/libcroco) -I%{_includedir}/libxml2"
+# Side effect of unbundling libcroco and libxml2 from libtextstyle.
+export LIBS="-lm -lcroco-0.6 -lxml2"
+
 for i in $(find -name configure|sort)
 do
 cd $(dirname $i)
@@ -211,7 +222,7 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--disable-static \
 	--disable-rpath \
 	--enable-shared \
-	--with-included-gettext \
+	--without-included-gettext \
 	--enable-openmp \
 %if %{with csharp}
 	--enable-csharp=mono \
@@ -224,6 +235,13 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 
 cd -
 done
+
+# Eliminate hardcoded rpaths; workaround libtool reordering -Wl,--as-needed
+# after all the libraries.
+sed -e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
+    -e 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' \
+    -e 's|CC=.g..|& -Wl,--as-needed|' \
+    -i $(find . -name libtool)
 
 %make_build
 
