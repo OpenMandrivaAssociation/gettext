@@ -274,20 +274,6 @@ rm -rf %{buildroot}%{_datadir}/doc/gettext/javadoc*
 mv %{buildroot}%{_datadir}/doc/gettext/* %{buildroot}/%{_datadir}/doc/libasprintf/* htmldoc
 mv htmldoc/examples examples
 
-# move crucial stuff to /lib and /bin
-pushd %{buildroot}
-mkdir -p bin
-mkdir -p ./%{_lib}
-mv usr/bin/gettext bin/
-ln -s ../../bin/gettext usr/bin/gettext
-mv .%{_libdir}/libintl.so.* ./%{_lib}/
-rm -f .%{_libdir}/libintl.so
-# if major changed, then package build will fail, which is a GOOD THING.
-# this prevents mindless packaging.
-[ -f %{_lib}/libintl.so.%{intl_major} ] && \
-  ln -s ../../%{_lib}/libintl.so.%{intl_major} .%{_libdir}/libintl.so
-popd
-
 # remove java stuff, otherwise rpm complains
 %if !%{with java}
 rm -f %{buildroot}%{_libdir}/%{name}/gnu.gettext.* \
@@ -306,7 +292,7 @@ done
 # For some reason, the post scripts fail to do this
 #strip --strip-unneeded %buildroot/%_lib/libintl.so.8.*
 %define strip_boot %{_target_platform}-strip
-%{strip_boot} --strip-unneeded %{buildroot}/%{_lib}/libintl.so.%{intl_major}.*
+%{strip_boot} --strip-unneeded %{buildroot}%{_libdir}}/libintl.so.%{intl_major}.*
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS
@@ -343,14 +329,14 @@ done
 %files base -f %{name}.lang
 %doc gettext-runtime/man/*.1.html
 %doc gettext-runtime/intl/COPYING*
-/bin/gettext
+%{_bindir}/gettext
 %{_bindir}/gettext
 %{_bindir}/ngettext
 %{_mandir}/man1/gettext*
 %{_mandir}/man1/ngettext*
 
 %files -n %{libintl}
-/%{_lib}/libintl.so.%{intl_major}*
+%{_libdir}/libintl.so.%{intl_major}*
 
 %files -n %{libasprintf}
 %{_libdir}/libasprintf.so.%{major}*
