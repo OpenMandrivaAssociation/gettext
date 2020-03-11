@@ -271,7 +271,7 @@ for i in gettext-runtime/man/*.html; do
   rm -f %{buildroot}%{_datadir}/doc/gettext/`basename $i`
 done
 rm -rf %{buildroot}%{_datadir}/doc/gettext/javadoc*
-mv %{buildroot}%{_datadir}/doc/gettext/* %{buildroot}/%{_datadir}/doc/libasprintf/* htmldoc
+mv %{buildroot}%{_datadir}/doc/gettext/* %{buildroot}/%{_datadir}/doc/libasprintf/* htmldoc ||:
 mv htmldoc/examples examples
 
 # remove java stuff, otherwise rpm complains
