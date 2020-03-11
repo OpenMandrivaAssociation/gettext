@@ -222,7 +222,7 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--disable-static \
 	--disable-rpath \
 	--enable-shared \
-	--without-included-gettext \
+	--with-included-gettext \
 	--enable-openmp \
 %if %{with csharp}
 	--enable-csharp=mono \
