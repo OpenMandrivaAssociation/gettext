@@ -336,6 +336,9 @@ LC_ALL=C make check
 %install
 %if %{with compat32}
 %make_install -C build32
+# We get 64-bit versions of the same tools in
+# %{_libdir}/gettext -- no need for duplication
+rm -rf %{buildroot}%{_prefix}/lib/gettext
 %endif
 %make_install
 
