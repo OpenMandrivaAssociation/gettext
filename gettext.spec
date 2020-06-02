@@ -1,3 +1,8 @@
+# gettext is used by wine and some of its dependencies
+%ifarch %{x86_64}
+%bcond_without compat32
+%endif
+
 %define intl_major 8
 %define extpo_major 0
 %define major 0
@@ -6,11 +11,18 @@
 %define libgettextpo %mklibname gettextpo %{extpo_major}
 %define libgettextmisc %mklibname gettextmisc
 %define libtextstyle %mklibname textstyle %{major}
+%define devname %mklibname gettext -d
+%define lib32intl %mklib32name intl %{intl_major}
+%define lib32asprintf %mklib32name asprintf %{major}
+%define lib32gettextpo %mklib32name gettextpo %{extpo_major}
+%define lib32gettextmisc %mklib32name gettextmisc
+%define lib32textstyle %mklib32name textstyle %{major}
+%define dev32name %mklib32name gettext -d
 %define _disable_rebuild_configure 1
 
 # (tpg) optimize it a bit
 %ifnarch %{riscv}
-%global optflags %{optflags} -O3 --rtlib=compiler-rt
+%global optflags %{optflags} -O3
 %endif
 
 %bcond_with check
@@ -19,8 +31,8 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.20.1
-Release:	2
+Version:	0.20.2
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -32,8 +44,6 @@ Source100:	%{name}.rpmlintrc
 # KDE example comes from 2003, it's really useless now
 Patch0:		gettext-0.19.1-drop-kde-example.patch
 Patch14:	gettext-0.19.5-stdio-gets.patch
-Patch15:	gettext-0.20-check-for-__builtin_mul_overflow_p.patch
-Patch16:	cr-statement.c-timsort.h-fix-formatting-issues.patch
 
 BuildRequires:	bison
 BuildRequires:	chrpath
@@ -88,7 +98,6 @@ Build Option:
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
-Provides:	libintl = %{EVRD}
 
 %description -n %{libintl}
 This package contains the libintl library, which is important for
@@ -129,7 +138,69 @@ License:	LGPL
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
-%package devel
+%if %{with compat32}
+%package -n %{lib32intl}
+Summary:	Basic libintl library for internationalization (32-bit)
+Group:		System/Libraries
+License:	LGPL
+Provides:	libintl = %{EVRD}
+
+%description -n %{lib32intl}
+This package contains the libintl library, which is important for
+system internationalization.
+
+%package -n %{lib32asprintf}
+Summary:	%{name} libasprintf needed by %{name} utilities (32-bit)
+Group:		System/Libraries
+License:	LGPL
+
+%description -n %{lib32asprintf}
+This package contains libasprintf shared library.
+
+%package -n %{lib32gettextpo}
+Summary:	%{name} libgettextpo needed by %{name} utilities (32-bit)
+Group:		System/Libraries
+License:	LGPL
+
+%description -n %{lib32gettextpo}
+This package contains libgettextpo shared library.
+
+%package -n %{lib32textstyle}
+Summary:	%{name} libtextstyle needed by %{name} utilities (32-bit)
+Group:		System/Libraries
+License:	LGPL
+
+%description -n %{lib32textstyle}
+This package contains libtextstyle shared library.
+
+%package -n	%{lib32gettextmisc}
+Summary:	Other %{name} libraries needed by %{name} utilities (32-bit)
+Group:		System/Libraries
+License:	LGPL
+
+%description -n %{lib32gettextmisc}
+This package contains all other libraries used by %{name} utilities,
+and are not very widely used outside %{name}.
+
+%package -n %{dev32name}
+Summary:	Development files for %{name} (32-bit)
+Group:		Development/C
+License:	LGPL
+Requires:	%{devname} = %{EVRD}
+Requires:	%{lib32gettextpo} = %{EVRD}
+Requires:	%{lib32asprintf} = %{EVRD}
+Requires:	%{lib32gettextmisc} = %{EVRD}
+Requires:	%{lib32intl} = %{EVRD}
+Requires:	%{lib32textstyle} = %{EVRD}
+
+%description -n %{dev32name}
+This package contains all development related files necessary for
+developing or compiling applications/libraries that needs
+internationalization capability. You also need this package if you
+want to add gettext support for your project.
+%endif
+
+%package -n %{devname}
 Summary:	Development files for %{name}
 Group:		Development/C
 License:	LGPL
@@ -139,8 +210,9 @@ Requires:	%{libasprintf} = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
 Requires:	%{libintl} = %{EVRD}
 Requires:	%{libtextstyle} = %{EVRD}
+%rename		%{name}-devel
 
-%description devel
+%description -n %{devname}
 This package contains all development related files necessary for
 developing or compiling applications/libraries that needs
 internationalization capability. You also need this package if you
@@ -193,8 +265,18 @@ sed -e 's/\(gl_cv_libcroco_force_included=\)yes/\1no/' \
 install -m 755 %{SOURCE3} build-aux/
 
 autoreconf -fi
+cp libtextstyle/build-aux/compile build-aux/
 
 %build
+%if %{with compat32}
+export CONFIGURE_TOP=`pwd`
+mkdir build32
+cd build32
+%configure32 --with-included-gettext
+%make_build
+cd ..
+unset CONFIGURE_TOP
+%endif
 
 %if %with java
 export GCJ="%{_bindir}/gcj"
@@ -252,6 +334,9 @@ LC_ALL=C make check
 %endif
 
 %install
+%if %{with compat32}
+%make_install -C build32
+%endif
 %make_install
 
 # remove unwanted files
@@ -307,8 +392,8 @@ done
 %{_datadir}/%{name}/projects
 %{_datadir}/%{name}/javaversion.class
 %{_datadir}/%{name}/styles
-%dir %{_datadir}/%{name}-0.20
-%{_datadir}/%{name}-0.20/its
+%dir %{_datadir}/%{name}-%{version}
+%{_datadir}/%{name}-%{version}/its
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/cldr-plurals
 %{_libdir}/%{name}/hostname
@@ -351,7 +436,7 @@ done
 %files -n %{libtextstyle}
 %{_libdir}/libtextstyle.so.%{major}*
 
-%files devel
+%files -n %{devname}
 %doc gettext-runtime/man/*.3.html examples htmldoc
 %doc %{_docdir}/libtextstyle
 %{_bindir}/autopoint
@@ -388,4 +473,30 @@ done
 %doc gettext-runtime/intl-csharp/csharpdoc/*
 %{_libdir}/*.dll
 %{_libdir}/gettext/*.exe
+%endif
+
+%if %{with compat32}
+%files -n %{lib32intl}
+%{_prefix}/lib/libintl.so.%{intl_major}*
+
+%files -n %{lib32asprintf}
+%{_prefix}/lib/libasprintf.so.%{major}*
+
+%files -n %{lib32gettextpo}
+%{_prefix}/lib/libgettextpo.so.%{extpo_major}*
+
+%files -n %{lib32gettextmisc}
+%{_prefix}/lib/libgettextlib-*.so
+%{_prefix}/lib/libgettextsrc-*.so
+
+%files -n %{lib32textstyle}
+%{_prefix}/lib/libtextstyle.so.%{major}*
+
+%files -n %{dev32name}
+%{_prefix}/lib/libasprintf.so
+%{_prefix}/lib/libgettextlib.so
+%{_prefix}/lib/libgettextpo.so
+%{_prefix}/lib/libgettextsrc.so
+%{_prefix}/lib/libintl.so
+%{_prefix}/lib/libtextstyle.so
 %endif
