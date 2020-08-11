@@ -265,7 +265,6 @@ sed -e 's/\(gl_cv_libcroco_force_included=\)yes/\1no/' \
 install -m 755 %{SOURCE3} build-aux/
 
 autoreconf -fi
-cp libtextstyle/build-aux/compile build-aux/
 
 %build
 %if %{with compat32}
