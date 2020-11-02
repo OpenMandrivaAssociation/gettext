@@ -286,13 +286,9 @@ export CPPFLAGS="-I%{_includedir}/libxml2"
 # Side effect of unbundling libxml2 from libtextstyle.
 export LIBS="-lm -lxml2"
 
-for i in $(find -name configure|sort)
-do
-cd $(dirname $i)
 # ARM -fuse-ld=bfd addition is a workaround for a crash in
 # ARM32 ld.gold when linking clang++ code.
 # FIXME remove when binutils is fixed.
-CONFIGURE_TOP=. \
 %ifarch %{arm}
 CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 %endif
@@ -311,9 +307,6 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 %if ! %{with java}
 	--disable-java \
 %endif
-
-cd -
-done
 
 # Eliminate hardcoded rpaths; workaround libtool reordering -Wl,--as-needed
 # after all the libraries.
