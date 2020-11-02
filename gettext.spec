@@ -52,7 +52,6 @@ BuildRequires:	texinfo
 BuildRequires:	acl-devel
 BuildRequires:	gomp-devel
 BuildRequires:	libunistring-devel
-BuildRequires:	pkgconfig(libcroco-0.6)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
 %if %with check
@@ -72,7 +71,7 @@ BuildRequires:	gcc-java
 BuildRequires:	gcj-tools
 BuildRequires:	fastjar
 %endif
-
+Provides:	bundled(libcroco) = 0.6.13
 Requires:	%{name}-base = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
 
@@ -254,12 +253,11 @@ into C# dll or resource files.
 %prep
 %autosetup -p1
 
-# Defeat libtextstyle attempt to bundle libcroco and libxml2.  The comments
+# Defeat libtextstyle attempt to bundle libxml2.  The comments
 # indicate this is done because the libtextstyle authors do not want
 # applications using their code to suffer startup delays due to the
 # relocations in the two libraries.  This is not a sufficient reason for Fedora.
-sed -e 's/\(gl_cv_libcroco_force_included=\)yes/\1no/' \
-    -e 's/\(gl_cv_libxml_force_included=\)yes/\1no/' \
+sed -e 's/\(gl_cv_libxml_force_included=\)yes/\1no/' \
     -i libtextstyle/configure
 
 install -m 755 %{SOURCE3} build-aux/
@@ -268,7 +266,7 @@ autoreconf -fi
 
 %build
 %if %{with compat32}
-export CONFIGURE_TOP=`pwd`
+export CONFIGURE_TOP="$(pwd)"
 mkdir build32
 cd build32
 %configure32 --with-included-gettext
@@ -283,11 +281,10 @@ export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
 
-# Ours libcroco-devel has an extra "libcroco" path component, and the
 # libxml2-devel package has an extra "libxml2" path component.
-export CPPFLAGS="-I$(ls -1d %{_includedir}/libcroco-*/libcroco) -I%{_includedir}/libxml2"
-# Side effect of unbundling libcroco and libxml2 from libtextstyle.
-export LIBS="-lm -lcroco-0.6 -lxml2"
+export CPPFLAGS="-I%{_includedir}/libxml2"
+# Side effect of unbundling libxml2 from libtextstyle.
+export LIBS="-lm -lxml2"
 
 for i in $(find -name configure|sort)
 do
@@ -303,7 +300,8 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--disable-static \
 	--disable-rpath \
 	--enable-shared \
-	--with-included-gettext \
+	--without-included-gettext \
+	--with-included-libcroco \
 	--enable-openmp \
 %if %{with csharp}
 	--enable-csharp=mono \
