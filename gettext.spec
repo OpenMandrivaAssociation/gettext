@@ -269,7 +269,7 @@ autoreconf -fi
 export CONFIGURE_TOP="$(pwd)"
 mkdir build32
 cd build32
-%configure32 --with-included-gettext
+%configure32 --with-included-gettext --with-included-libcroco
 %make_build
 cd ..
 unset CONFIGURE_TOP
@@ -296,7 +296,7 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--disable-static \
 	--disable-rpath \
 	--enable-shared \
-	--without-included-gettext \
+	--with-included-gettext \
 	--with-included-libcroco \
 	--enable-openmp \
 %if %{with csharp}
