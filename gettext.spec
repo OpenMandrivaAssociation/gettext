@@ -1,6 +1,6 @@
 # gettext is used by wine and some of its dependencies
 %ifarch %{x86_64}
-%bcond_without compat32
+%bcond_with compat32
 %endif
 
 %define intl_major 8
