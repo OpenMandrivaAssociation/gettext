@@ -51,7 +51,7 @@ BuildRequires:	flex
 BuildRequires:	texinfo
 BuildRequires:	acl-devel
 BuildRequires:	gomp-devel
-BuildRequires:	libunistring-devel
+BuildRequires:	pkgconfig(libunistring)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
 %if %with check
