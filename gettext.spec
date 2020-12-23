@@ -54,6 +54,11 @@ BuildRequires:	gomp-devel
 BuildRequires:	pkgconfig(libunistring)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
+%if %{with compat32}
+BuildRequires:	libunistring-devel
+BuildRequires:	libxml2-devel
+BuildRequires:	libncursesw-devel
+%endif
 %if %with check
 # test suite
 BuildRequires:	locales-fa
