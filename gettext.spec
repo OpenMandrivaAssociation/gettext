@@ -325,6 +325,9 @@ LC_ALL=C make check
 
 %install
 %if %{with compat32}
+# FIXME workaround for weird breakage
+# Make sure nothing tries to run configure again
+find build32 |xargs touch
 %make_install -C build32
 # We get 64-bit versions of the same tools in
 # %{_libdir}/gettext -- no need for duplication
