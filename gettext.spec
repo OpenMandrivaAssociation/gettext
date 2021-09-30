@@ -32,7 +32,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.21
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -404,13 +404,13 @@ done
 %if %{with java}
 %exclude %{_libdir}/%{name}/gnu.gettext.*
 %endif
-%{_infodir}/gettext.*
+%doc %{_infodir}/gettext.*
 # now it's separate package
 #% {_datadir}/emacs/site-lisp/*.el*
-%{_mandir}/man1/envsubst.*
-%{_mandir}/man1/msg*
-%{_mandir}/man1/xgettext.*
-%{_mandir}/man1/recode-sr-latin.*
+%doc %{_mandir}/man1/envsubst.*
+%doc %{_mandir}/man1/msg*
+%doc %{_mandir}/man1/xgettext.*
+%doc %{_mandir}/man1/recode-sr-latin.*
 
 %files base -f %{name}.lang
 %doc gettext-runtime/man/*.1.html
@@ -418,8 +418,8 @@ done
 %{_bindir}/gettext
 %{_bindir}/gettext
 %{_bindir}/ngettext
-%{_mandir}/man1/gettext*
-%{_mandir}/man1/ngettext*
+%doc %{_mandir}/man1/gettext*
+%doc %{_mandir}/man1/ngettext*
 
 %files -n %{libintl}
 %{_libdir}/libintl.so.%{intl_major}*
@@ -449,8 +449,8 @@ done
 %{_datadir}/%{name}/po
 %{_datadir}/aclocal/*
 %{_includedir}/*
-%{_infodir}/autosprintf*
-%{_infodir}/libtextstyle*
+%doc %{_infodir}/autosprintf*
+%doc %{_infodir}/libtextstyle*
 # "lib*.so" cannot be used (it should be 'lib[^\.]*\.so' regexp in fact
 # but using regexp is not possible here; so we list all files manually
 %{_libdir}/libasprintf.so
@@ -459,8 +459,8 @@ done
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
 %{_libdir}/libtextstyle.so
-%{_mandir}/man1/autopoint.*
-%{_mandir}/man3/*
+%doc %{_mandir}/man1/autopoint.*
+%doc %{_mandir}/man3/*
 
 %if %{with java}
 %files java
