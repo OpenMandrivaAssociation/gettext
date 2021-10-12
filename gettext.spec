@@ -32,31 +32,41 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.21
-Release:	2
+Release:	3
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
 Source0:	http://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.xz
 Source2:	po-mode-init.el
-# Missing in 0.19.1 tarball
-Source3:	git-version-gen
 Source100:	%{name}.rpmlintrc
 # KDE example comes from 2003, it's really useless now
 Patch0:		gettext-0.19.1-drop-kde-example.patch
-Patch14:	gettext-0.19.5-stdio-gets.patch
+# (tpg) Mageia patches
+Patch1:		gettext-0.20.1-unescaped-left-brace.patch
+Patch2:		use-pkgconfig.patch
+Patch3:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
+# (tpg) https://savannah.gnu.org/bugs/?59929
+Patch4:		use-acinit-for-libtextstyle.patch
+Patch5:		gettext-0.21-clang.patch
 
+# (tpg) Fedora patches
+# https://lists.gnu.org/archive/html/bug-gnulib/2020-07/msg00195.html
+Patch10:	gettext-0.21-gnulib-perror-tests.patch
+Patch11:	gettext-0.21-covscan.patch
+BuildRequires:	wget
 BuildRequires:	bison
 BuildRequires:	chrpath
 BuildRequires:	flex
 BuildRequires:	texinfo
-BuildRequires:	acl-devel
+BuildRequires:	pkgconfig(libacl)
 BuildRequires:	gomp-devel
+BuildRequires:	gettext-devel
 BuildRequires:	pkgconfig(libunistring)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
+BuildRequires:	pkgconfig(glib-2.0)
 %if %{with compat32}
 BuildRequires:	libunistring-devel
-BuildRequires:	libxml2-devel
 BuildRequires:	libncursesw-devel
 %endif
 %if %with check
@@ -66,7 +76,7 @@ BuildRequires:	locales-fr
 BuildRequires:	locales-ja
 BuildRequires:	locales-zh
 %endif
-%if %with csharp
+%if %{with csharp}
 # (Abel) we pick mono here, though pnet can be used as well.
 BuildRequires:	mono
 %endif
@@ -133,7 +143,7 @@ License:	LGPL
 %description -n %{libtextstyle}
 This package contains libtextstyle shared library.
 
-%package -n	%{libgettextmisc}
+%package -n %{libgettextmisc}
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
@@ -177,7 +187,7 @@ License:	LGPL
 %description -n %{lib32textstyle}
 This package contains libtextstyle shared library.
 
-%package -n	%{lib32gettextmisc}
+%package -n %{lib32gettextmisc}
 Summary:	Other %{name} libraries needed by %{name} utilities (32-bit)
 Group:		System/Libraries
 License:	LGPL
@@ -214,6 +224,8 @@ Requires:	%{libasprintf} = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
 Requires:	%{libintl} = %{EVRD}
 Requires:	%{libtextstyle} = %{EVRD}
+# (tpg) autopoint requires cmp
+Requires:	diffutils
 %rename		%{name}-devel
 
 %description -n %{devname}
@@ -258,38 +270,38 @@ into C# dll or resource files.
 %prep
 %autosetup -p1
 
-# Defeat libtextstyle attempt to bundle libxml2.  The comments
-# indicate this is done because the libtextstyle authors do not want
-# applications using their code to suffer startup delays due to the
-# relocations in the two libraries.  This is not a sufficient reason for Fedora.
-sed -e 's/\(gl_cv_libxml_force_included=\)yes/\1no/' \
-    -i libtextstyle/configure
-
-install -m 755 %{SOURCE3} build-aux/
-
-autoreconf -fi
+./autogen.sh --skip-gnulib
 
 %build
 %if %{with compat32}
 export CONFIGURE_TOP="$(pwd)"
 mkdir build32
 cd build32
-%configure32 --with-included-gettext --with-included-libcroco
+%configure32 --with-included-libcroco --with-included-glib --with-included-libxml
 %make_build
 cd ..
 unset CONFIGURE_TOP
 %endif
+
+# Defeat libtextstyle attempt to bundle libxml2.  The comments
+# indicate this is done because the libtextstyle authors do not want
+# applications using their code to suffer startup delays due to the
+# relocations in the two libraries.  This is not a sufficient reason for us.
+rm -rf libtextstyle/lib/{glib,libxml}
+for l in LIBGLIB LIBXML; do
+    sed -i -e "s,\(gl_$l(\[\).*\(\])\),\1no\2,g" $(grep -rl -e "gl_$l(\[.*\])")
+done
+
+# libxml2-devel package has an extra "libxml2" path component.
+export CPPFLAGS="-I%{_includedir}/libxml2"
+# Side effect of unbundling libxml2 from libtextstyle.
+export LIBS="-lm -lxml2"
 
 %if %with java
 export GCJ="%{_bindir}/gcj"
 export JAVAC="%{_bindir}/gcj -C"
 export JAR="%{_bindir}/fastjar"
 %endif
-
-# libxml2-devel package has an extra "libxml2" path component.
-export CPPFLAGS="-I%{_includedir}/libxml2"
-# Side effect of unbundling libxml2 from libtextstyle.
-export LIBS="-lm -lxml2"
 
 # ARM -fuse-ld=bfd addition is a workaround for a crash in
 # ARM32 ld.gold when linking clang++ code.
@@ -302,6 +314,8 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--disable-rpath \
 	--enable-shared \
 	--with-included-gettext \
+	--without-included-regex \
+	--without-included-glib \
 	--with-included-libcroco \
 	--enable-openmp \
 %if %{with csharp}
@@ -330,9 +344,6 @@ LC_ALL=C make check
 
 %install
 %if %{with compat32}
-# FIXME workaround for weird breakage
-# Make sure nothing tries to run configure again
-find build32 |xargs touch
 %make_install -C build32
 # We get 64-bit versions of the same tools in
 # %{_libdir}/gettext -- no need for duplication
@@ -378,7 +389,7 @@ done
 # For some reason, the post scripts fail to do this
 #strip --strip-unneeded %buildroot/%_lib/libintl.so.8.*
 %define strip_boot %{_target_platform}-strip
-%{strip_boot} --strip-unneeded %{buildroot}%{_libdir}/libintl.so.%{intl_major}.*
+%{strip_boot} --strip-unneeded %{buildroot}%{_libdir}/libintl.so.*
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS
