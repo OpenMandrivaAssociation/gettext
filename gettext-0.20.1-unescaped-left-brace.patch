@@ -1,0 +1,22 @@
+--- gettext-0.20.1/libtextstyle/build-aux/texi2html.orig	2020-01-03 17:08:53.429123885 -0500
++++ gettext-0.20.1/libtextstyle/build-aux/texi2html	2020-01-03 17:10:04.911870239 -0500
+@@ -16423,7 +16423,7 @@ sub scan_texi($$$$;$)
+             }
+             elsif ($macro eq 'value')
+             {
+-                if (s/^{($VARRE)}//)
++                if (s/^\{($VARRE)\}//)
+                 {
+                     my $value = $1;
+                     if ($state->{'arg_expansion'})
+--- gettext-0.20.1/build-aux/texi2html.orig	2020-01-03 17:10:17.097826999 -0500
++++ gettext-0.20.1/build-aux/texi2html	2020-01-03 17:11:15.412620077 -0500
+@@ -16423,7 +16423,7 @@ sub scan_texi($$$$;$)
+             }
+             elsif ($macro eq 'value')
+             {
+-                if (s/^{($VARRE)}//)
++                if (s/^\{($VARRE)\}//)
+                 {
+                     my $value = $1;
+                     if ($state->{'arg_expansion'})

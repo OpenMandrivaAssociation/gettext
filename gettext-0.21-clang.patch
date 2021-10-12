@@ -1,0 +1,48 @@
+diff -Naur gettext-0.21/gettext-runtime/gnulib-lib/xalloc-oversized.h gettext-0.21.tpg/gettext-runtime/gnulib-lib/xalloc-oversized.h
+--- gettext-0.21/gettext-runtime/gnulib-lib/xalloc-oversized.h	2020-04-11 09:58:24.000000000 +0000
++++ gettext-0.21.tpg/gettext-runtime/gnulib-lib/xalloc-oversized.h	2021-11-08 22:09:22.348218342 +0000
+@@ -41,7 +41,7 @@
+    positive and N must be nonnegative.  This is a macro, not a
+    function, so that it works correctly even when SIZE_MAX < N.  */
+ 
+-#if 7 <= __GNUC__
++#if 7 <= __GNUC__ && !defined(__clang__)
+ # define xalloc_oversized(n, s) \
+    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
+ #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
+diff -Naur gettext-0.21/gettext-tools/gnulib-lib/xalloc-oversized.h gettext-0.21.tpg/gettext-tools/gnulib-lib/xalloc-oversized.h
+--- gettext-0.21/gettext-tools/gnulib-lib/xalloc-oversized.h	2020-04-11 09:59:42.000000000 +0000
++++ gettext-0.21.tpg/gettext-tools/gnulib-lib/xalloc-oversized.h	2021-11-08 22:11:32.057578090 +0000
+@@ -41,7 +41,7 @@
+    positive and N must be nonnegative.  This is a macro, not a
+    function, so that it works correctly even when SIZE_MAX < N.  */
+ 
+-#if 7 <= __GNUC__
++#if 7 <= __GNUC__ && !defined(__clang__)
+ # define xalloc_oversized(n, s) \
+    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
+ #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
+diff -Naur gettext-0.21/gettext-tools/libgettextpo/xalloc-oversized.h gettext-0.21.tpg/gettext-tools/libgettextpo/xalloc-oversized.h
+--- gettext-0.21/gettext-tools/libgettextpo/xalloc-oversized.h	2020-04-11 10:00:57.000000000 +0000
++++ gettext-0.21.tpg/gettext-tools/libgettextpo/xalloc-oversized.h	2021-11-08 22:11:05.527708863 +0000
+@@ -41,7 +41,7 @@
+    positive and N must be nonnegative.  This is a macro, not a
+    function, so that it works correctly even when SIZE_MAX < N.  */
+ 
+-#if 7 <= __GNUC__
++#if 7 <= __GNUC__ && !defined(__clang__)
+ # define xalloc_oversized(n, s) \
+    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
+ #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
+diff -Naur gettext-0.21/libtextstyle/lib/xalloc-oversized.h gettext-0.21.tpg/libtextstyle/lib/xalloc-oversized.h
+--- gettext-0.21/libtextstyle/lib/xalloc-oversized.h	2020-04-11 10:01:52.000000000 +0000
++++ gettext-0.21.tpg/libtextstyle/lib/xalloc-oversized.h	2021-11-08 22:11:53.057474635 +0000
+@@ -41,7 +41,7 @@
+    positive and N must be nonnegative.  This is a macro, not a
+    function, so that it works correctly even when SIZE_MAX < N.  */
+ 
+-#if 7 <= __GNUC__
++#if 7 <= __GNUC__ && !defined(__clang__)
+ # define xalloc_oversized(n, s) \
+    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
+ #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
