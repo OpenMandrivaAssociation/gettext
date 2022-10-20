@@ -1,48 +1,120 @@
-diff -Naur gettext-0.21/gettext-runtime/gnulib-lib/xalloc-oversized.h gettext-0.21.tpg/gettext-runtime/gnulib-lib/xalloc-oversized.h
---- gettext-0.21/gettext-runtime/gnulib-lib/xalloc-oversized.h	2020-04-11 09:58:24.000000000 +0000
-+++ gettext-0.21.tpg/gettext-runtime/gnulib-lib/xalloc-oversized.h	2021-11-08 22:09:22.348218342 +0000
-@@ -41,7 +41,7 @@
-    positive and N must be nonnegative.  This is a macro, not a
-    function, so that it works correctly even when SIZE_MAX < N.  */
+diff -Naur gettext-0.21.1/gettext-runtime/config.h.in gettext-0.21.1.tpg/gettext-runtime/config.h.in
+--- gettext-0.21.1/gettext-runtime/config.h.in	2022-10-09 21:31:35.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-runtime/config.h.in	2022-11-01 19:06:27.158004221 +0000
+@@ -1396,7 +1396,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -Naur gettext-0.21.1/gettext-runtime/gnulib-lib/cdefs.h gettext-0.21.1.tpg/gettext-runtime/gnulib-lib/cdefs.h
+--- gettext-0.21.1/gettext-runtime/gnulib-lib/cdefs.h	2022-09-11 12:44:32.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-runtime/gnulib-lib/cdefs.h	2022-11-01 19:07:30.037748872 +0000
+@@ -685,7 +685,7 @@
+ #  define __attr_access_none(argno)
+ #endif
  
--#if 7 <= __GNUC__
-+#if 7 <= __GNUC__ && !defined(__clang__)
- # define xalloc_oversized(n, s) \
-    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
- #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
-diff -Naur gettext-0.21/gettext-tools/gnulib-lib/xalloc-oversized.h gettext-0.21.tpg/gettext-tools/gnulib-lib/xalloc-oversized.h
---- gettext-0.21/gettext-tools/gnulib-lib/xalloc-oversized.h	2020-04-11 09:59:42.000000000 +0000
-+++ gettext-0.21.tpg/gettext-tools/gnulib-lib/xalloc-oversized.h	2021-11-08 22:11:32.057578090 +0000
-@@ -41,7 +41,7 @@
-    positive and N must be nonnegative.  This is a macro, not a
-    function, so that it works correctly even when SIZE_MAX < N.  */
+-#if __GNUC_PREREQ (11, 0)
++#if __GNUC_PREREQ (11, 0) && !defined(__clang__)
+ /* Designates dealloc as a function to call to deallocate objects
+    allocated by the declared function.  */
+ # define __attr_dealloc(dealloc, argno) \
+diff -Naur gettext-0.21.1/gettext-runtime/gnulib-m4/gnulib-common.m4 gettext-0.21.1.tpg/gettext-runtime/gnulib-m4/gnulib-common.m4
+--- gettext-0.21.1/gettext-runtime/gnulib-m4/gnulib-common.m4	2022-09-11 12:44:34.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-runtime/gnulib-m4/gnulib-common.m4	2022-11-01 19:06:52.507901746 +0000
+@@ -178,7 +178,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -Naur gettext-0.21.1/gettext-runtime/libasprintf/config.h.in gettext-0.21.1.tpg/gettext-runtime/libasprintf/config.h.in
+--- gettext-0.21.1/gettext-runtime/libasprintf/config.h.in	2022-10-09 21:31:31.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-runtime/libasprintf/config.h.in	2022-11-01 19:08:22.147534470 +0000
+@@ -321,7 +321,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -Naur gettext-0.21.1/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4 gettext-0.21.1.tpg/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4
+--- gettext-0.21.1/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4	2022-09-11 12:44:41.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4	2022-11-01 19:08:03.077613207 +0000
+@@ -178,7 +178,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -Naur gettext-0.21.1/gettext-tools/config.h.in gettext-0.21.1.tpg/gettext-tools/config.h.in
+--- gettext-0.21.1/gettext-tools/config.h.in	2022-10-09 21:32:07.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-tools/config.h.in	2022-11-01 19:01:41.599103126 +0000
+@@ -2779,7 +2779,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -Naur gettext-0.21.1/gettext-tools/gnulib-lib/cdefs.h gettext-0.21.1.tpg/gettext-tools/gnulib-lib/cdefs.h
+--- gettext-0.21.1/gettext-tools/gnulib-lib/cdefs.h	2022-09-11 12:45:20.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-tools/gnulib-lib/cdefs.h	2022-11-01 19:04:51.018386464 +0000
+@@ -685,7 +685,7 @@
+ #  define __attr_access_none(argno)
+ #endif
  
--#if 7 <= __GNUC__
-+#if 7 <= __GNUC__ && !defined(__clang__)
- # define xalloc_oversized(n, s) \
-    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
- #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
-diff -Naur gettext-0.21/gettext-tools/libgettextpo/xalloc-oversized.h gettext-0.21.tpg/gettext-tools/libgettextpo/xalloc-oversized.h
---- gettext-0.21/gettext-tools/libgettextpo/xalloc-oversized.h	2020-04-11 10:00:57.000000000 +0000
-+++ gettext-0.21.tpg/gettext-tools/libgettextpo/xalloc-oversized.h	2021-11-08 22:11:05.527708863 +0000
-@@ -41,7 +41,7 @@
-    positive and N must be nonnegative.  This is a macro, not a
-    function, so that it works correctly even when SIZE_MAX < N.  */
- 
--#if 7 <= __GNUC__
-+#if 7 <= __GNUC__ && !defined(__clang__)
- # define xalloc_oversized(n, s) \
-    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
- #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
-diff -Naur gettext-0.21/libtextstyle/lib/xalloc-oversized.h gettext-0.21.tpg/libtextstyle/lib/xalloc-oversized.h
---- gettext-0.21/libtextstyle/lib/xalloc-oversized.h	2020-04-11 10:01:52.000000000 +0000
-+++ gettext-0.21.tpg/libtextstyle/lib/xalloc-oversized.h	2021-11-08 22:11:53.057474635 +0000
-@@ -41,7 +41,7 @@
-    positive and N must be nonnegative.  This is a macro, not a
-    function, so that it works correctly even when SIZE_MAX < N.  */
- 
--#if 7 <= __GNUC__
-+#if 7 <= __GNUC__ && !defined(__clang__)
- # define xalloc_oversized(n, s) \
-    __builtin_mul_overflow_p (n, s, (__xalloc_count_type) 1)
- #elif 5 <= __GNUC__ && !defined __ICC && !__STRICT_ANSI__
+-#if __GNUC_PREREQ (11, 0)
++#if __GNUC_PREREQ (11, 0) && !defined(__clang__)
+ /* Designates dealloc as a function to call to deallocate objects
+    allocated by the declared function.  */
+ # define __attr_dealloc(dealloc, argno) \
+diff -Naur gettext-0.21.1/gettext-tools/gnulib-m4/gnulib-common.m4 gettext-0.21.1.tpg/gettext-tools/gnulib-m4/gnulib-common.m4
+--- gettext-0.21.1/gettext-tools/gnulib-m4/gnulib-common.m4	2022-09-11 12:47:14.000000000 +0000
++++ gettext-0.21.1.tpg/gettext-tools/gnulib-m4/gnulib-common.m4	2022-11-01 19:02:13.498986415 +0000
+@@ -178,7 +178,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -Naur gettext-0.21.1/libtextstyle/config.h.in gettext-0.21.1.tpg/libtextstyle/config.h.in
+--- gettext-0.21.1/libtextstyle/config.h.in	2022-10-09 21:31:58.000000000 +0000
++++ gettext-0.21.1.tpg/libtextstyle/config.h.in	2022-11-01 19:05:34.658214274 +0000
+@@ -1314,7 +1314,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -Naur gettext-0.21.1/libtextstyle/gnulib-m4/gnulib-common.m4 gettext-0.21.1.tpg/libtextstyle/gnulib-m4/gnulib-common.m4
+--- gettext-0.21.1/libtextstyle/gnulib-m4/gnulib-common.m4	2022-09-11 12:48:13.000000000 +0000
++++ gettext-0.21.1.tpg/libtextstyle/gnulib-m4/gnulib-common.m4	2022-11-01 19:06:05.108092811 +0000
+@@ -178,7 +178,7 @@
+    _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+-#if _GL_GNUC_PREREQ (11, 0)
++#if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ # define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ #else
+ # define _GL_ATTRIBUTE_DEALLOC(f, i)

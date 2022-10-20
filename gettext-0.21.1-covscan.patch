@@ -1,8 +1,8 @@
 diff --git a/gettext-tools/src/msgl-cat.c b/gettext-tools/src/msgl-cat.c
-index 990d39e..9814502 100644
+index 965cc8c..38c7ca1 100644
 --- a/gettext-tools/src/msgl-cat.c
 +++ b/gettext-tools/src/msgl-cat.c
-@@ -306,6 +306,7 @@ catenate_msgdomain_list (string_list_ty *file_list,
+@@ -307,6 +307,7 @@ catenate_msgdomain_list (string_list_ty *file_list,
                                     mp->msgid);
                        multiline_error (xstrdup (""),
                                         xasprintf ("%s\n", errormsg));
@@ -11,10 +11,10 @@ index 990d39e..9814502 100644
                  }
                else
 diff --git a/gettext-tools/src/x-csharp.c b/gettext-tools/src/x-csharp.c
-index 5cf72ad..7a0e5d3 100644
+index 13d4a53..669db2f 100644
 --- a/gettext-tools/src/x-csharp.c
 +++ b/gettext-tools/src/x-csharp.c
-@@ -560,6 +560,7 @@ comment_line_end (size_t chars_to_remove)
+@@ -561,6 +561,7 @@ comment_line_end (size_t chars_to_remove)
    buffer[buflen] = '\0';
    savable_comment_add (buffer);
    lexical_context = lc_outside;
@@ -23,10 +23,10 @@ index 5cf72ad..7a0e5d3 100644
  
  
 diff --git a/gettext-tools/src/x-java.c b/gettext-tools/src/x-java.c
-index eff1e6f..7e1bb78 100644
+index e89ab95..6c1b4a7 100644
 --- a/gettext-tools/src/x-java.c
 +++ b/gettext-tools/src/x-java.c
-@@ -460,6 +460,7 @@ comment_line_end (size_t chars_to_remove)
+@@ -461,6 +461,7 @@ comment_line_end (size_t chars_to_remove)
      --buflen;
    buffer[buflen] = '\0';
    savable_comment_add (buffer);
@@ -35,18 +35,19 @@ index eff1e6f..7e1bb78 100644
  
  
 diff --git a/gettext-tools/src/x-rst.c b/gettext-tools/src/x-rst.c
-index cde1ee6..fca441e 100644
+index cde1ee6..82f645f 100644
 --- a/gettext-tools/src/x-rst.c
 +++ b/gettext-tools/src/x-rst.c
-@@ -651,6 +651,7 @@ extract_rsj (FILE *f,
+@@ -651,6 +651,8 @@ extract_rsj (FILE *f,
            else
              goto invalid_rsj;
  
 +          free (s1);
++
            /* Parse a comma.  */
            c = phase2_getc ();
            if (c == '}')
-@@ -667,6 +668,7 @@ extract_rsj (FILE *f,
+@@ -667,6 +669,7 @@ extract_rsj (FILE *f,
  
    fp = NULL;
    real_file_name = NULL;
@@ -66,3 +67,4 @@ index 06b7076..2189aac 100644
                  }
                else
                  break;
+

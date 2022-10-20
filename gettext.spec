@@ -10,13 +10,11 @@
 %define libasprintf %mklibname asprintf %{major}
 %define libgettextpo %mklibname gettextpo %{extpo_major}
 %define libgettextmisc %mklibname gettextmisc
-%define libtextstyle %mklibname textstyle %{major}
 %define devname %mklibname gettext -d
 %define lib32intl %mklib32name intl %{intl_major}
 %define lib32asprintf %mklib32name asprintf %{major}
 %define lib32gettextpo %mklib32name gettextpo %{extpo_major}
 %define lib32gettextmisc %mklib32name gettextmisc
-%define lib32textstyle %mklib32name textstyle %{major}
 %define dev32name %mklib32name gettext -d
 %define _disable_rebuild_configure 1
 
@@ -31,8 +29,8 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.21
-Release:	3
+Version:	0.21.1
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -43,16 +41,13 @@ Source100:	%{name}.rpmlintrc
 Patch0:		gettext-0.19.1-drop-kde-example.patch
 # (tpg) Mageia patches
 Patch1:		gettext-0.20.1-unescaped-left-brace.patch
-Patch2:		use-pkgconfig.patch
-Patch3:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
-# (tpg) https://savannah.gnu.org/bugs/?59929
-Patch4:		use-acinit-for-libtextstyle.patch
-Patch5:		gettext-0.21-clang.patch
+Patch2:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
+Patch3:		gettext-0.21-clang.patch
 
 # (tpg) Fedora patches
-# https://lists.gnu.org/archive/html/bug-gnulib/2020-07/msg00195.html
-Patch10:	gettext-0.21-gnulib-perror-tests.patch
-Patch11:	gettext-0.21-covscan.patch
+Patch4:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-disable-libtextstyle.patch
+Patch5:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-covscan.patch
+
 BuildRequires:	wget
 BuildRequires:	bison
 BuildRequires:	chrpath
@@ -65,9 +60,11 @@ BuildRequires:	pkgconfig(libunistring)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(glib-2.0)
+BuildRequires:	texlive-dvips.bin
 %if %{with compat32}
-BuildRequires:	libunistring-devel
-BuildRequires:	libncursesw-devel
+BuildRequires:	devel(libunistring)
+BuildRequires:	devel(libncursesw)
+BuildRequires:	libc6
 %endif
 %if %with check
 # test suite
@@ -135,18 +132,12 @@ Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
 %description -n %{libgettextpo}
 This package contains libgettextpo shared library.
 
-%package -n %{libtextstyle}
-Summary:	%{name} libtextstyle needed by %{name} utilities
-Group:		System/Libraries
-License:	LGPL
-
-%description -n %{libtextstyle}
-This package contains libtextstyle shared library.
-
 %package -n %{libgettextmisc}
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
+Provides:	%{mklibname textstyle 0} = 0.21.1-1
+Obsoletes:	%{mklibname textstyle 0} < 0.21.1-1
 
 %description -n %{libgettextmisc}
 This package contains all other libraries used by %{name} utilities,
@@ -179,18 +170,12 @@ License:	LGPL
 %description -n %{lib32gettextpo}
 This package contains libgettextpo shared library.
 
-%package -n %{lib32textstyle}
-Summary:	%{name} libtextstyle needed by %{name} utilities (32-bit)
-Group:		System/Libraries
-License:	LGPL
-
-%description -n %{lib32textstyle}
-This package contains libtextstyle shared library.
-
 %package -n %{lib32gettextmisc}
 Summary:	Other %{name} libraries needed by %{name} utilities (32-bit)
 Group:		System/Libraries
 License:	LGPL
+Provides:	%{mklib32name textstyle 0} = 0.21.1-1
+Obsoletes:	%{mklib32name textstyle 0} < 0.21.1-1
 
 %description -n %{lib32gettextmisc}
 This package contains all other libraries used by %{name} utilities,
@@ -205,7 +190,6 @@ Requires:	%{lib32gettextpo} = %{EVRD}
 Requires:	%{lib32asprintf} = %{EVRD}
 Requires:	%{lib32gettextmisc} = %{EVRD}
 Requires:	%{lib32intl} = %{EVRD}
-Requires:	%{lib32textstyle} = %{EVRD}
 
 %description -n %{dev32name}
 This package contains all development related files necessary for
@@ -223,7 +207,6 @@ Requires:	%{libgettextpo} = %{EVRD}
 Requires:	%{libasprintf} = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
 Requires:	%{libintl} = %{EVRD}
-Requires:	%{libtextstyle} = %{EVRD}
 # (tpg) autopoint requires cmp
 Requires:	diffutils
 %rename		%{name}-devel
@@ -270,19 +253,6 @@ into C# dll or resource files.
 %prep
 %autosetup -p1
 
-./autogen.sh --skip-gnulib
-
-%build
-%if %{with compat32}
-export CONFIGURE_TOP="$(pwd)"
-mkdir build32
-cd build32
-%configure32 --with-included-libcroco --with-included-glib --with-included-libxml
-%make_build
-cd ..
-unset CONFIGURE_TOP
-%endif
-
 # Defeat libtextstyle attempt to bundle libxml2.  The comments
 # indicate this is done because the libtextstyle authors do not want
 # applications using their code to suffer startup delays due to the
@@ -292,10 +262,17 @@ for l in LIBGLIB LIBXML; do
     sed -i -e "s,\(gl_$l(\[\).*\(\])\),\1no\2,g" $(grep -rl -e "gl_$l(\[.*\])")
 done
 
-# libxml2-devel package has an extra "libxml2" path component.
-export CPPFLAGS="-I%{_includedir}/libxml2"
-# Side effect of unbundling libxml2 from libtextstyle.
-export LIBS="-lm -lxml2"
+autoreconf -fi
+
+%build
+%if %{with compat32}
+mkdir -p ../build32
+cp -a . ../build32
+cd ../build32
+%configure32 --with-included-libcroco --with-included-glib --with-included-libxml
+%make_build
+cd ../%{name}-%{version}
+%endif
 
 %if %with java
 export GCJ="%{_bindir}/gcj"
@@ -344,7 +321,9 @@ LC_ALL=C make check
 
 %install
 %if %{with compat32}
-%make_install -C build32
+cd ../build32
+%make_install
+cd -
 # We get 64-bit versions of the same tools in
 # %{_libdir}/gettext -- no need for duplication
 rm -rf %{buildroot}%{_prefix}/lib/gettext
@@ -427,7 +406,6 @@ done
 %doc gettext-runtime/man/*.1.html
 %doc gettext-runtime/intl/COPYING*
 %{_bindir}/gettext
-%{_bindir}/gettext
 %{_bindir}/ngettext
 %doc %{_mandir}/man1/gettext*
 %doc %{_mandir}/man1/ngettext*
@@ -445,12 +423,8 @@ done
 %{_libdir}/libgettextlib-*.so
 %{_libdir}/libgettextsrc-*.so
 
-%files -n %{libtextstyle}
-%{_libdir}/libtextstyle.so.%{major}*
-
 %files -n %{devname}
 %doc gettext-runtime/man/*.3.html examples htmldoc
-%doc %{_docdir}/libtextstyle
 %{_bindir}/autopoint
 %{_bindir}/gettextize
 %{_datadir}/%{name}/ABOUT-NLS
@@ -461,7 +435,6 @@ done
 %{_datadir}/aclocal/*
 %{_includedir}/*
 %doc %{_infodir}/autosprintf*
-%doc %{_infodir}/libtextstyle*
 # "lib*.so" cannot be used (it should be 'lib[^\.]*\.so' regexp in fact
 # but using regexp is not possible here; so we list all files manually
 %{_libdir}/libasprintf.so
@@ -469,7 +442,6 @@ done
 %{_libdir}/libgettextpo.so
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
-%{_libdir}/libtextstyle.so
 %doc %{_mandir}/man1/autopoint.*
 %doc %{_mandir}/man3/*
 
@@ -501,14 +473,10 @@ done
 %{_prefix}/lib/libgettextlib-*.so
 %{_prefix}/lib/libgettextsrc-*.so
 
-%files -n %{lib32textstyle}
-%{_prefix}/lib/libtextstyle.so.%{major}*
-
 %files -n %{dev32name}
 %{_prefix}/lib/libasprintf.so
 %{_prefix}/lib/libgettextlib.so
 %{_prefix}/lib/libgettextpo.so
 %{_prefix}/lib/libgettextsrc.so
 %{_prefix}/lib/libintl.so
-%{_prefix}/lib/libtextstyle.so
 %endif
