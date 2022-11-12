@@ -30,7 +30,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.21.1
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -61,6 +61,9 @@ BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	texlive-dvips.bin
+# Needed to make sure gettext realizes we have
+# a working iconv()
+BuildRequires:	locales-extra-charsets
 %if %{with compat32}
 BuildRequires:	devel(libunistring)
 BuildRequires:	devel(libncursesw)
