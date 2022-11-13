@@ -26,6 +26,7 @@
 %bcond_with check
 %bcond_with java
 %bcond_with csharp
+%bcond_without emacs
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
@@ -86,6 +87,9 @@ BuildRequires:	jdk-current
 Provides:	bundled(libcroco) = 0.6.13
 Requires:	%{name}-base = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
+%if %{with emacs}
+BuildRequires:	emacs
+%endif
 
 %description
 The GNU gettext package provides a set of tools and documentation for producing
@@ -349,7 +353,9 @@ rm -f %{buildroot}%{_includedir}/libintl.h \
       %{buildroot}%{_datadir}/locale/locale.alias
 rm -f gettext-runtime/intl-java/javadoc2/package-list
 
+%if %{with emacs}
 install -D -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/emacs/site-start.d/%{name}.el
+%endif
 
 # remove non-standard lc directories
 for i in en@boldquot en@quot ; do rm -rf %{buildroot}/%{_datadir}/locale/$i; done
@@ -437,9 +443,11 @@ EOF
 %doc %{_mandir}/man1/gettext*
 %doc %{_mandir}/man1/ngettext*
 
+%if %{with emacs}
 %files emacs
 %config(noreplace) %{_sysconfdir}/emacs/site-start.d/*.el
 %{_datadir}/emacs/site-lisp/*.el*
+%endif
 
 %files -n %{libintl}
 %{_libdir}/libintl.so.%{intl_major}*
