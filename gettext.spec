@@ -81,10 +81,7 @@ BuildRequires:	locales-zh
 BuildRequires:	mono
 %endif
 %if %with java
-BuildRequires:	eclipse-ecj
-BuildRequires:	gcc-java
-BuildRequires:	gcj-tools
-BuildRequires:	fastjar
+BuildRequires:	jdk-current
 %endif
 Provides:	bundled(libcroco) = 0.6.13
 Requires:	%{name}-base = %{EVRD}
@@ -253,6 +250,14 @@ functions in C#. This allows compiling GNU gettext message catalogs
 into C# dll or resource files.
 %endif
 
+%package emacs
+Summary:	Emacs editor integration for gettext
+Enhances:	emacs
+Requires:	emacs
+
+%description emacs
+Emacs editor integration for gettext
+
 %prep
 %autosetup -p1
 
@@ -267,22 +272,21 @@ done
 
 autoreconf -fi
 
-%build
-%if %{with compat32}
-mkdir -p ../build32
-cp -a . ../build32
-cd ../build32
-%configure32 --with-included-libcroco --with-included-glib --with-included-libxml
-%make_build
-cd ../%{name}-%{version}
-%endif
+export CONFIGURE_TOP=$(pwd)
 
 %if %with java
-export GCJ="%{_bindir}/gcj"
-export JAVAC="%{_bindir}/gcj -C"
-export JAR="%{_bindir}/fastjar"
+. %{_sysconfdir}/profile.d/90java.sh
 %endif
 
+%if %{with compat32}
+mkdir build32
+cd build32
+%configure32 --with-included-libcroco --with-included-glib --with-included-libxml
+cd ..
+%endif
+
+mkdir build
+cd build
 # ARM -fuse-ld=bfd addition is a workaround for a crash in
 # ARM32 ld.gold when linking clang++ code.
 # FIXME remove when binutils is fixed.
@@ -314,24 +318,31 @@ sed -e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
     -e 's|CC=.g..|& -Wl,--as-needed|' \
     -i $(find . -name libtool)
 
-%make_build
+%build
+%if %with java
+. %{_sysconfdir}/profile.d/90java.sh
+%endif
+
+%if %{with compat32}
+%make_build -C build32
+%endif
+
+%make_build -C build
 
 %if %{with check}
 %check
-export JAVAC=ecj
 LC_ALL=C make check
 %endif
 
 %install
 %if %{with compat32}
-cd ../build32
-%make_install
-cd -
+%make_install -C build32
 # We get 64-bit versions of the same tools in
 # %{_libdir}/gettext -- no need for duplication
 rm -rf %{buildroot}%{_prefix}/lib/gettext
+rm -rf %{buildroot}%{_prefix}/lib/GNU.Gettext.dll
 %endif
-%make_install
+%make_install -C build
 
 # remove unwanted files
 rm -f %{buildroot}%{_includedir}/libintl.h \
@@ -368,6 +379,22 @@ done
 
 %find_lang %{name} --all-name
 
+# libintl is completely superflous (glibc, musl and uClibc-ng all have
+# its functionality built in), so let's avoid bloat where possible...
+# (We need libintl.so.8 anyway, for 3rd party applications built on
+# other distros)
+rm -f %{buildroot}%{_libdir}/libintl.so
+cat >%{buildroot}%{_libdir}/libintl.so <<EOF
+/* GNU ld script */
+EOF
+
+%if %{with compat32}
+rm -f %{buildroot}%{_prefix}/lib/libintl.so
+cat >%{buildroot}%{_prefix}/lib/libintl.so <<EOF
+/* GNU ld script */
+EOF
+%endif
+
 # For some reason, the post scripts fail to do this
 #strip --strip-unneeded %buildroot/%_lib/libintl.so.8.*
 %define strip_boot %{_target_platform}-strip
@@ -375,7 +402,6 @@ done
 
 %files
 %doc AUTHORS README COPYING gettext-runtime/ABOUT-NLS gettext-runtime/BUGS NEWS THANKS
-%config(noreplace) %{_sysconfdir}/emacs/site-start.d/*.el
 %{_bindir}/envsubst
 %{_bindir}/gettext.sh
 %{_bindir}/msg*
@@ -398,8 +424,6 @@ done
 %exclude %{_libdir}/%{name}/gnu.gettext.*
 %endif
 %doc %{_infodir}/gettext.*
-# now it's separate package
-#% {_datadir}/emacs/site-lisp/*.el*
 %doc %{_mandir}/man1/envsubst.*
 %doc %{_mandir}/man1/msg*
 %doc %{_mandir}/man1/xgettext.*
@@ -412,6 +436,10 @@ done
 %{_bindir}/ngettext
 %doc %{_mandir}/man1/gettext*
 %doc %{_mandir}/man1/ngettext*
+
+%files emacs
+%config(noreplace) %{_sysconfdir}/emacs/site-start.d/*.el
+%{_datadir}/emacs/site-lisp/*.el*
 
 %files -n %{libintl}
 %{_libdir}/libintl.so.%{intl_major}*
@@ -464,7 +492,7 @@ done
 
 %if %{with compat32}
 %files -n %{lib32intl}
-%{_prefix}/lib/libintl.so.%{intl_major}*
+%{_prefix}/lib/preloadable_libintl.so
 
 %files -n %{lib32asprintf}
 %{_prefix}/lib/libasprintf.so.%{major}*
