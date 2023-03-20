@@ -31,7 +31,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.21.1
-Release:	3
+Release:	4
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -305,7 +305,7 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--without-included-regex \
 	--without-included-glib \
 	--with-included-libcroco \
-	--disable-openmp \
+	--enable-openmp \
 %if %{with csharp}
 	--enable-csharp=mono \
 %else
