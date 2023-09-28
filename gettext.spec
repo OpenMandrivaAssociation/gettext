@@ -3,6 +3,11 @@
 %bcond_without compat32
 %endif
 
+# Workaround for libtool relink bug
+%if %{cross_compiling}
+%define prefer_gcc 1
+%endif
+
 %define intl_major 8
 %define extpo_major 0
 %define major 0
