@@ -1,0 +1,424 @@
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/stdlib.in.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/stdlib.in.h
+--- gettext-0.22.3/gettext-runtime/gnulib-lib/stdlib.in.h.omv~	2023-10-05 19:47:08.830379470 +0200
++++ gettext-0.22.3/gettext-runtime/gnulib-lib/stdlib.in.h	2023-10-05 19:47:19.185491607 +0200
+@@ -108,7 +108,7 @@ struct random_data
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/striconv.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/striconv.h
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/string.in.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/string.in.h
+--- gettext-0.22.3/gettext-runtime/gnulib-lib/string.in.h.omv~	2023-10-05 19:47:21.729519134 +0200
++++ gettext-0.22.3/gettext-runtime/gnulib-lib/string.in.h	2023-10-05 19:47:28.144588507 +0200
+@@ -79,7 +79,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/trim.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/trim.h
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/unistr.in.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/unistr.in.h
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/wchar.in.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/wchar.in.h
+--- gettext-0.22.3/gettext-runtime/gnulib-lib/wchar.in.h.omv~	2023-10-05 19:47:30.610615160 +0200
++++ gettext-0.22.3/gettext-runtime/gnulib-lib/wchar.in.h	2023-10-05 19:47:38.160696709 +0200
+@@ -95,7 +95,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/xalloc.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/xalloc.h
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/xreadlink.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/xreadlink.h
+diff -up gettext-0.22.3/gettext-runtime/gnulib-lib/xstriconv.h.omv~ gettext-0.22.3/gettext-runtime/gnulib-lib/xstriconv.h
+diff -up gettext-0.22.3/gettext-runtime/gnulib-m4/gnulib-common.m4.omv~ gettext-0.22.3/gettext-runtime/gnulib-m4/gnulib-common.m4
+--- gettext-0.22.3/gettext-runtime/gnulib-m4/gnulib-common.m4.omv~	2023-10-05 19:47:41.632734185 +0200
++++ gettext-0.22.3/gettext-runtime/gnulib-m4/gnulib-common.m4	2023-10-05 19:47:53.703864354 +0200
+@@ -216,7 +216,7 @@ AC_DEFUN([gl_COMMON_BODY], [
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/intl/config.h.in.omv~ gettext-0.22.3/gettext-runtime/intl/config.h.in
+--- gettext-0.22.3/gettext-runtime/intl/config.h.in.omv~	2023-10-05 19:47:53.712864451 +0200
++++ gettext-0.22.3/gettext-runtime/intl/config.h.in	2023-10-05 19:47:59.651928426 +0200
+@@ -1284,7 +1284,7 @@
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/intl/gnulib-lib/attribute.h.omv~ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/attribute.h
+diff -up gettext-0.22.3/gettext-runtime/intl/gnulib-lib/relocatable.h.omv~ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/relocatable.h
+diff -up gettext-0.22.3/gettext-runtime/intl/gnulib-lib/stdlib.in.h.omv~ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/stdlib.in.h
+--- gettext-0.22.3/gettext-runtime/intl/gnulib-lib/stdlib.in.h.omv~	2023-10-05 19:48:04.257978009 +0200
++++ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/stdlib.in.h	2023-10-05 19:48:13.733079924 +0200
+@@ -108,7 +108,7 @@ struct random_data
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/intl/gnulib-lib/string.in.h.omv~ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/string.in.h
+--- gettext-0.22.3/gettext-runtime/intl/gnulib-lib/string.in.h.omv~	2023-10-05 19:48:13.742080021 +0200
++++ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/string.in.h	2023-10-05 19:48:24.641197113 +0200
+@@ -79,7 +79,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/intl/gnulib-lib/wchar.in.h.omv~ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/wchar.in.h
+--- gettext-0.22.3/gettext-runtime/intl/gnulib-lib/wchar.in.h.omv~	2023-10-05 19:48:24.652197231 +0200
++++ gettext-0.22.3/gettext-runtime/intl/gnulib-lib/wchar.in.h	2023-10-05 19:48:30.590260964 +0200
+@@ -95,7 +95,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/intl/gnulib-m4/gnulib-common.m4.omv~ gettext-0.22.3/gettext-runtime/intl/gnulib-m4/gnulib-common.m4
+--- gettext-0.22.3/gettext-runtime/intl/gnulib-m4/gnulib-common.m4.omv~	2023-10-05 19:48:30.600261071 +0200
++++ gettext-0.22.3/gettext-runtime/intl/gnulib-m4/gnulib-common.m4	2023-10-05 19:48:35.654315283 +0200
+@@ -216,7 +216,7 @@ AC_DEFUN([gl_COMMON_BODY], [
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/libasprintf/config.h.in.omv~ gettext-0.22.3/gettext-runtime/libasprintf/config.h.in
+--- gettext-0.22.3/gettext-runtime/libasprintf/config.h.in.omv~	2023-10-05 19:48:35.663315379 +0200
++++ gettext-0.22.3/gettext-runtime/libasprintf/config.h.in	2023-10-05 19:48:40.817370632 +0200
+@@ -827,7 +827,7 @@
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/attribute.h.omv~ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/attribute.h
+diff -up gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/stdlib.in.h.omv~ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/stdlib.in.h
+--- gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/stdlib.in.h.omv~	2023-10-05 19:48:43.262396832 +0200
++++ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/stdlib.in.h	2023-10-05 19:48:48.412451995 +0200
+@@ -108,7 +108,7 @@ struct random_data
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/string.in.h.omv~ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/string.in.h
+--- gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/string.in.h.omv~	2023-10-05 19:48:48.418452060 +0200
++++ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/string.in.h	2023-10-05 19:48:55.016522688 +0200
+@@ -79,7 +79,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/wchar.in.h.omv~ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/wchar.in.h
+--- gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/wchar.in.h.omv~	2023-10-05 19:48:55.027522805 +0200
++++ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-lib/wchar.in.h	2023-10-05 19:49:00.003576038 +0200
+@@ -95,7 +95,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4.omv~ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4
+--- gettext-0.22.3/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4.omv~	2023-10-05 19:49:00.013576144 +0200
++++ gettext-0.22.3/gettext-runtime/libasprintf/gnulib-m4/gnulib-common.m4	2023-10-05 19:49:06.480645285 +0200
+@@ -216,7 +216,7 @@ AC_DEFUN([gl_COMMON_BODY], [
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/config.h.in.omv~ gettext-0.22.3/gettext-tools/config.h.in
+--- gettext-0.22.3/gettext-tools/config.h.in.omv~	2023-10-05 19:49:06.490645392 +0200
++++ gettext-0.22.3/gettext-tools/config.h.in	2023-10-05 19:49:11.263696391 +0200
+@@ -3078,7 +3078,7 @@
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/areadlink.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/areadlink.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/attribute.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/attribute.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/canonicalize.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/canonicalize.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/concat-filename.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/concat-filename.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/dirname.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/dirname.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/filenamecat.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/filenamecat.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/ialloc.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/ialloc.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/javaversion.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/javaversion.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/quotearg.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/quotearg.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/read-file.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/read-file.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/relocatable.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/relocatable.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/sh-quote.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/sh-quote.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/stdlib.in.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/stdlib.in.h
+--- gettext-0.22.3/gettext-tools/gnulib-lib/stdlib.in.h.omv~	2023-10-05 19:49:24.786840746 +0200
++++ gettext-0.22.3/gettext-tools/gnulib-lib/stdlib.in.h	2023-10-05 19:49:32.332921210 +0200
+@@ -108,7 +108,7 @@ struct random_data
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/striconv.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/striconv.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/striconveh.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/striconveh.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/striconveha.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/striconveha.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/string-desc.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/string-desc.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/string.in.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/string.in.h
+--- gettext-0.22.3/gettext-tools/gnulib-lib/string.in.h.omv~	2023-10-05 19:49:37.014971105 +0200
++++ gettext-0.22.3/gettext-tools/gnulib-lib/string.in.h	2023-10-05 19:49:42.890033680 +0200
+@@ -79,7 +79,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/trim.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/trim.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/unistr.in.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/unistr.in.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/wchar.in.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/wchar.in.h
+--- gettext-0.22.3/gettext-tools/gnulib-lib/wchar.in.h.omv~	2023-10-05 19:49:45.441060840 +0200
++++ gettext-0.22.3/gettext-tools/gnulib-lib/wchar.in.h	2023-10-05 19:49:55.578168699 +0200
+@@ -95,7 +95,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/windows-spawn.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/windows-spawn.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/xalloc.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/xalloc.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/xmemdup0.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/xmemdup0.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/xreadlink.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/xreadlink.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/xstriconv.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/xstriconv.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/xstriconveh.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/xstriconveh.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/xvasprintf.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/xvasprintf.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-m4/gnulib-common.m4.omv~ gettext-0.22.3/gettext-tools/gnulib-m4/gnulib-common.m4
+--- gettext-0.22.3/gettext-tools/gnulib-m4/gnulib-common.m4.omv~	2023-10-05 19:50:02.906246604 +0200
++++ gettext-0.22.3/gettext-tools/gnulib-m4/gnulib-common.m4	2023-10-05 19:50:10.973332303 +0200
+@@ -216,7 +216,7 @@ AC_DEFUN([gl_COMMON_BODY], [
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/attribute.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/attribute.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/concat-filename.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/concat-filename.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/ialloc.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/ialloc.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/relocatable.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/relocatable.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/stdlib.in.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/stdlib.in.h
+--- gettext-0.22.3/gettext-tools/libgettextpo/stdlib.in.h.omv~	2023-10-05 19:50:16.514391129 +0200
++++ gettext-0.22.3/gettext-tools/libgettextpo/stdlib.in.h	2023-10-05 19:50:21.699446149 +0200
+@@ -108,7 +108,7 @@ struct random_data
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/striconv.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/striconv.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/striconveh.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/striconveh.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/striconveha.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/striconveha.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/string-desc.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/string-desc.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/string.in.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/string.in.h
+--- gettext-0.22.3/gettext-tools/libgettextpo/string.in.h.omv~	2023-10-05 19:50:25.586487378 +0200
++++ gettext-0.22.3/gettext-tools/libgettextpo/string.in.h	2023-10-05 19:50:32.557561282 +0200
+@@ -79,7 +79,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/unistr.in.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/unistr.in.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/wchar.in.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/wchar.in.h
+--- gettext-0.22.3/gettext-tools/libgettextpo/wchar.in.h.omv~	2023-10-05 19:50:33.941575950 +0200
++++ gettext-0.22.3/gettext-tools/libgettextpo/wchar.in.h	2023-10-05 19:50:38.584625142 +0200
+@@ -95,7 +95,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/xalloc.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/xalloc.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/xstriconv.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/xstriconv.h
+diff -up gettext-0.22.3/gettext-tools/libgettextpo/xvasprintf.h.omv~ gettext-0.22.3/gettext-tools/libgettextpo/xvasprintf.h
+diff -up gettext-0.22.3/gettext-tools/libgrep/attribute.h.omv~ gettext-0.22.3/gettext-tools/libgrep/attribute.h
+diff -up gettext-0.22.3/gettext-tools/libgrep/stdlib.in.h.omv~ gettext-0.22.3/gettext-tools/libgrep/stdlib.in.h
+--- gettext-0.22.3/gettext-tools/libgrep/stdlib.in.h.omv~	2023-10-05 19:50:44.622689083 +0200
++++ gettext-0.22.3/gettext-tools/libgrep/stdlib.in.h	2023-10-05 19:50:51.975766905 +0200
+@@ -108,7 +108,7 @@ struct random_data
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/gettext-tools/libgrep/wchar.in.h.omv~ gettext-0.22.3/gettext-tools/libgrep/wchar.in.h
+--- gettext-0.22.3/gettext-tools/libgrep/wchar.in.h.omv~	2023-10-05 19:50:51.986767021 +0200
++++ gettext-0.22.3/gettext-tools/libgrep/wchar.in.h	2023-10-05 19:50:54.605794727 +0200
+@@ -95,7 +95,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/libtextstyle/config.h.in.omv~ gettext-0.22.3/libtextstyle/config.h.in
+--- gettext-0.22.3/libtextstyle/config.h.in.omv~	2023-10-05 19:50:54.716795902 +0200
++++ gettext-0.22.3/libtextstyle/config.h.in	2023-10-05 19:50:56.926819276 +0200
+@@ -1525,7 +1525,7 @@
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/libtextstyle/gnulib-m4/gnulib-common.m4.omv~ gettext-0.22.3/libtextstyle/gnulib-m4/gnulib-common.m4
+--- gettext-0.22.3/libtextstyle/gnulib-m4/gnulib-common.m4.omv~	2023-10-05 19:50:57.036820439 +0200
++++ gettext-0.22.3/libtextstyle/gnulib-m4/gnulib-common.m4	2023-10-05 19:50:59.114842414 +0200
+@@ -216,7 +216,7 @@ AC_DEFUN([gl_COMMON_BODY], [
+    can be freed via 'free'; it can be used only after declaring 'free'.  */
+ /* Applies to: functions.  Cannot be used on inline functions.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if _GL_GNUC_PREREQ (11, 0)
++# if _GL_GNUC_PREREQ (11, 0) && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/libtextstyle/lib/attribute.h.omv~ gettext-0.22.3/libtextstyle/lib/attribute.h
+diff -up gettext-0.22.3/libtextstyle/lib/concat-filename.h.omv~ gettext-0.22.3/libtextstyle/lib/concat-filename.h
+diff -up gettext-0.22.3/libtextstyle/lib/get_progname_of.h.omv~ gettext-0.22.3/libtextstyle/lib/get_progname_of.h
+diff -up gettext-0.22.3/libtextstyle/lib/ialloc.h.omv~ gettext-0.22.3/libtextstyle/lib/ialloc.h
+diff -up gettext-0.22.3/libtextstyle/lib/stdlib.in.h.omv~ gettext-0.22.3/libtextstyle/lib/stdlib.in.h
+--- gettext-0.22.3/libtextstyle/lib/stdlib.in.h.omv~	2023-10-05 19:51:04.533899699 +0200
++++ gettext-0.22.3/libtextstyle/lib/stdlib.in.h	2023-10-05 19:51:08.087937255 +0200
+@@ -108,7 +108,7 @@ struct random_data
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/libtextstyle/lib/string.in.h.omv~ gettext-0.22.3/libtextstyle/lib/string.in.h
+--- gettext-0.22.3/libtextstyle/lib/string.in.h.omv~	2023-10-05 19:51:08.096937351 +0200
++++ gettext-0.22.3/libtextstyle/lib/string.in.h	2023-10-05 19:51:10.289960519 +0200
+@@ -79,7 +79,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/libtextstyle/lib/unistr.in.h.omv~ gettext-0.22.3/libtextstyle/lib/unistr.in.h
+diff -up gettext-0.22.3/libtextstyle/lib/wchar.in.h.omv~ gettext-0.22.3/libtextstyle/lib/wchar.in.h
+--- gettext-0.22.3/libtextstyle/lib/wchar.in.h.omv~	2023-10-05 19:51:11.657974969 +0200
++++ gettext-0.22.3/libtextstyle/lib/wchar.in.h	2023-10-05 19:51:14.052000254 +0200
+@@ -95,7 +95,7 @@
+    that can be freed by passing them as the Ith argument to the
+    function F.  */
+ #ifndef _GL_ATTRIBUTE_DEALLOC
+-# if __GNUC__ >= 11
++# if __GNUC__ >= 11 && !defined(__clang__)
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+ # else
+ #  define _GL_ATTRIBUTE_DEALLOC(f, i)
+diff -up gettext-0.22.3/libtextstyle/lib/xalloc.h.omv~ gettext-0.22.3/libtextstyle/lib/xalloc.h
+diff -up gettext-0.22.3/libtextstyle/lib/xgethostname.h.omv~ gettext-0.22.3/libtextstyle/lib/xgethostname.h
+diff -up gettext-0.22.3/libtextstyle/lib/xvasprintf.h.omv~ gettext-0.22.3/libtextstyle/lib/xvasprintf.h
+diff -up gettext-0.22.3/gettext-tools/gnulib-lib/error.in.h.omv~ gettext-0.22.3/gettext-tools/gnulib-lib/error.in.h
+--- gettext-0.22.3/gettext-tools/gnulib-lib/error.in.h.omv~	2023-10-05 22:45:05.562500771 +0200
++++ gettext-0.22.3/gettext-tools/gnulib-lib/error.in.h	2023-10-05 22:46:13.332131293 +0200
+@@ -121,7 +121,7 @@ _GL_CXXALIAS_SYS (error, void,
+ # ifndef _GL_NO_INLINE_ERROR
+ #  ifdef error
+ /* Only gcc ≥ 4.7 has __builtin_va_arg_pack.  */
+-#   if _GL_GNUC_PREREQ (4, 7)
++#   if _GL_GNUC_PREREQ (4, 7) && !defined(__clang__)
+ #    pragma GCC diagnostic push
+ #    pragma GCC diagnostic ignored "-Wattributes"
+ _GL_ATTRIBUTE_MAYBE_UNUSED
+@@ -179,7 +179,7 @@ _GL_CXXALIAS_SYS (error_at_line, void,
+ # ifndef _GL_NO_INLINE_ERROR
+ #  ifdef error_at_line
+ /* Only gcc ≥ 4.7 has __builtin_va_arg_pack.  */
+-#   if _GL_GNUC_PREREQ (4, 7)
++#   if _GL_GNUC_PREREQ (4, 7) && !defined(__clang__)
+ #    pragma GCC diagnostic push
+ #    pragma GCC diagnostic ignored "-Wattributes"
+ _GL_ATTRIBUTE_MAYBE_UNUSED

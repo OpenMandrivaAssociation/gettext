@@ -1,7 +1,7 @@
-diff -urN gettext-0.19.1/gettext-tools/examples/Makefile.am gettext-0.19.1-patched/gettext-tools/examples/Makefile.am
---- gettext-0.19.1/gettext-tools/examples/Makefile.am	2014-06-09 19:44:29.000000000 +1100
-+++ gettext-0.19.1-patched/gettext-tools/examples/Makefile.am	2014-07-05 00:54:10.498702538 +1100
-@@ -86,43 +86,6 @@
+diff -up gettext-0.22.3/gettext-tools/examples/Makefile.am.1~ gettext-0.22.3/gettext-tools/examples/Makefile.am
+--- gettext-0.22.3/gettext-tools/examples/Makefile.am.1~	2023-09-18 22:09:26.000000000 +0200
++++ gettext-0.22.3/gettext-tools/examples/Makefile.am	2023-10-05 15:43:19.133949408 +0200
+@@ -98,43 +98,6 @@ EXAMPLESFILES = \
    hello-c++-qt/m4/qt.m4 \
    hello-c++-qt/po/Makefile.am \
    \
@@ -45,18 +45,18 @@ diff -urN gettext-0.19.1/gettext-tools/examples/Makefile.am gettext-0.19.1-patch
    hello-c++-gnome/INSTALL \
    hello-c++-gnome/autogen.sh \
    hello-c++-gnome/autoclean.sh \
-@@ -378,7 +341,6 @@
-   hello-c-gnome3 \
+@@ -389,7 +352,6 @@ EXAMPLESDIRS = \
    hello-c++ \
+   hello-c++20 \
    hello-c++-qt \
 -  hello-c++-kde \
    hello-c++-gnome \
    hello-c++-wxwidgets \
    hello-objc \
-diff -urN gettext-0.19.1/gettext-tools/examples/Makefile.in gettext-0.19.1-patched/gettext-tools/examples/Makefile.in
---- gettext-0.19.1/gettext-tools/examples/Makefile.in	2014-06-10 16:42:38.000000000 +1100
-+++ gettext-0.19.1-patched/gettext-tools/examples/Makefile.in	2014-07-05 00:54:05.337124483 +1100
-@@ -381,43 +381,6 @@
+diff -up gettext-0.22.3/gettext-tools/examples/Makefile.in.1~ gettext-0.22.3/gettext-tools/examples/Makefile.in
+--- gettext-0.22.3/gettext-tools/examples/Makefile.in.1~	2023-10-04 16:56:55.000000000 +0200
++++ gettext-0.22.3/gettext-tools/examples/Makefile.in	2023-10-05 15:43:26.461028914 +0200
+@@ -408,43 +408,6 @@ EXAMPLESFILES = \
    hello-c++-qt/m4/qt.m4 \
    hello-c++-qt/po/Makefile.am \
    \
@@ -100,9 +100,9 @@ diff -urN gettext-0.19.1/gettext-tools/examples/Makefile.in gettext-0.19.1-patch
    hello-c++-gnome/INSTALL \
    hello-c++-gnome/autogen.sh \
    hello-c++-gnome/autoclean.sh \
-@@ -674,7 +637,6 @@
-   hello-c-gnome3 \
+@@ -700,7 +663,6 @@ EXAMPLESDIRS = \
    hello-c++ \
+   hello-c++20 \
    hello-c++-qt \
 -  hello-c++-kde \
    hello-c++-gnome \

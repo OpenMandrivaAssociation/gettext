@@ -35,8 +35,8 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.21.1
-Release:	5
+Version:	0.22.3
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -48,7 +48,7 @@ Patch0:		gettext-0.19.1-drop-kde-example.patch
 # (tpg) Mageia patches
 Patch1:		gettext-0.20.1-unescaped-left-brace.patch
 Patch2:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
-Patch3:		gettext-0.21-clang.patch
+Patch3:		gettext-0.22.3-clang.patch
 
 # (tpg) Fedora patches
 Patch4:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-disable-libtextstyle.patch
@@ -357,6 +357,7 @@ rm -rf %{buildroot}%{_prefix}/lib/GNU.Gettext.dll
 rm -f %{buildroot}%{_includedir}/libintl.h \
       %{buildroot}%{_datadir}/locale/locale.alias
 rm -f gettext-runtime/intl-java/javadoc2/package-list
+rm -rf %{buildroot}%{_libdir}/*.a %{buildroot}%{_prefix}/lib/*.a
 
 %if %{with emacs}
 install -D -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/emacs/site-start.d/%{name}.el
