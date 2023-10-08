@@ -11,15 +11,25 @@
 %define intl_major 8
 %define extpo_major 0
 %define major 0
-%define libintl %mklibname intl %{intl_major}
-%define libasprintf %mklibname asprintf %{major}
-%define libgettextpo %mklibname gettextpo %{extpo_major}
+%define oldlibintl %mklibname intl %{intl_major}
+%define oldlibasprintf %mklibname asprintf %{major}
+%define oldlibgettextpo %mklibname gettextpo %{extpo_major}
+%define oldlibgettextmisc %mklibname gettextmisc
+%define libintl %mklibname intl
+%define libasprintf %mklibname asprintf
+%define libgettextpo %mklibname gettextpo
 %define libgettextmisc %mklibname gettextmisc
+%define libtextstyle %mklibname textstyle
 %define devname %mklibname gettext -d
-%define lib32intl %mklib32name intl %{intl_major}
-%define lib32asprintf %mklib32name asprintf %{major}
-%define lib32gettextpo %mklib32name gettextpo %{extpo_major}
+%define oldlib32intl %mklib32name intl %{intl_major}
+%define oldlib32asprintf %mklib32name asprintf %{major}
+%define oldlib32gettextpo %mklib32name gettextpo %{extpo_major}
+%define oldlib32gettextmisc %mklib32name gettextmisc
+%define lib32intl %mklib32name intl
+%define lib32asprintf %mklib32name asprintf
+%define lib32gettextpo %mklib32name gettextpo
 %define lib32gettextmisc %mklib32name gettextmisc
+%define lib32textstyle %mklib32name textstyle
 %define dev32name %mklib32name gettext -d
 %define _disable_rebuild_configure 1
 
@@ -36,7 +46,7 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.22.3
-Release:	1
+Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -51,7 +61,6 @@ Patch2:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
 Patch3:		gettext-0.22.3-clang.patch
 
 # (tpg) Fedora patches
-Patch4:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-disable-libtextstyle.patch
 Patch5:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-covscan.patch
 
 BuildRequires:	wget
@@ -118,6 +127,7 @@ Build Option:
 Summary:	Basic libintl library for internationalization
 Group:		System/Libraries
 License:	LGPL
+%rename %{oldlibintl}
 
 %description -n %{libintl}
 This package contains the libintl library, which is important for
@@ -127,7 +137,7 @@ system internationalization.
 Summary:	%{name} libasprintf needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
-Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
+%rename %{oldlibasprintf}
 
 %description -n %{libasprintf}
 This package contains libasprintf shared library.
@@ -136,7 +146,7 @@ This package contains libasprintf shared library.
 Summary:	%{name} libgettextpo needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
-Conflicts:	%{_lib}gettextmisc < 0.18.1.1-4
+%rename %{oldlibgettextpo}
 
 %description -n %{libgettextpo}
 This package contains libgettextpo shared library.
@@ -145,11 +155,19 @@ This package contains libgettextpo shared library.
 Summary:	Other %{name} libraries needed by %{name} utilities
 Group:		System/Libraries
 License:	LGPL
-Provides:	%{mklibname textstyle 0} = 0.21.1-1
-Obsoletes:	%{mklibname textstyle 0} < 0.21.1-1
+%rename %{oldlibgettextmisc}
 
 %description -n %{libgettextmisc}
 This package contains all other libraries used by %{name} utilities,
+and are not very widely used outside %{name}.
+
+%package -n %{libtextstyle}
+Summary:	The textstyle library needed by %{name} utilities
+Group:		System/Libraries
+License:	LGPL
+
+%description -n %{libtextstyle}
+This package the libtextstyle library used by %{name} utilities,
 and are not very widely used outside %{name}.
 
 %if %{with compat32}
@@ -158,6 +176,7 @@ Summary:	Basic libintl library for internationalization (32-bit)
 Group:		System/Libraries
 License:	LGPL
 Provides:	libintl = %{EVRD}
+%rename %{oldlib32intl}
 
 %description -n %{lib32intl}
 This package contains the libintl library, which is important for
@@ -167,6 +186,7 @@ system internationalization.
 Summary:	%{name} libasprintf needed by %{name} utilities (32-bit)
 Group:		System/Libraries
 License:	LGPL
+%rename %{oldlib32asprintf}
 
 %description -n %{lib32asprintf}
 This package contains libasprintf shared library.
@@ -175,6 +195,7 @@ This package contains libasprintf shared library.
 Summary:	%{name} libgettextpo needed by %{name} utilities (32-bit)
 Group:		System/Libraries
 License:	LGPL
+%rename %{oldlib32gettextpo}
 
 %description -n %{lib32gettextpo}
 This package contains libgettextpo shared library.
@@ -183,11 +204,19 @@ This package contains libgettextpo shared library.
 Summary:	Other %{name} libraries needed by %{name} utilities (32-bit)
 Group:		System/Libraries
 License:	LGPL
-Provides:	%{mklib32name textstyle 0} = 0.21.1-1
-Obsoletes:	%{mklib32name textstyle 0} < 0.21.1-1
+%rename %{oldlib32gettextmisc}
 
 %description -n %{lib32gettextmisc}
 This package contains all other libraries used by %{name} utilities,
+and are not very widely used outside %{name}.
+
+%package -n %{lib32textstyle}
+Summary:	Textstyle library needed by %{name} utilities (32-bit)
+Group:		System/Libraries
+License:	LGPL
+
+%description -n %{lib32textstyle}
+This package contains the textstyle library used by %{name} utilities,
 and are not very widely used outside %{name}.
 
 %package -n %{dev32name}
@@ -199,6 +228,7 @@ Requires:	%{lib32gettextpo} = %{EVRD}
 Requires:	%{lib32asprintf} = %{EVRD}
 Requires:	%{lib32gettextmisc} = %{EVRD}
 Requires:	%{lib32intl} = %{EVRD}
+Requires:	%{lib32textstyle} = %{EVRD}
 
 %description -n %{dev32name}
 This package contains all development related files necessary for
@@ -216,6 +246,7 @@ Requires:	%{libgettextpo} = %{EVRD}
 Requires:	%{libasprintf} = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
 Requires:	%{libintl} = %{EVRD}
+Requires:	%{libtextstyle} = %{EVRD}
 # (tpg) autopoint requires cmp
 Requires:	diffutils
 %rename		%{name}-devel
@@ -468,8 +499,12 @@ EOF
 %{_libdir}/libgettextlib-*.so
 %{_libdir}/libgettextsrc-*.so
 
+%files -n %{libtextstyle}
+%{_libdir}/libtextstyle.so*
+
 %files -n %{devname}
 %doc gettext-runtime/man/*.3.html examples htmldoc
+%doc %{_docdir}/libtextstyle
 %{_bindir}/autopoint
 %{_bindir}/gettextize
 %{_datadir}/%{name}/ABOUT-NLS
@@ -487,8 +522,10 @@ EOF
 %{_libdir}/libgettextpo.so
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
+%{_libdir}/libtextstyle.so
 %doc %{_mandir}/man1/autopoint.*
 %doc %{_mandir}/man3/*
+%doc %{_infodir}/libtextstyle.info*
 
 %if %{with java}
 %files java
@@ -518,10 +555,14 @@ EOF
 %{_prefix}/lib/libgettextlib-*.so
 %{_prefix}/lib/libgettextsrc-*.so
 
+%files -n %{lib32textstyle}
+%{_prefix}/lib/libtextstyle.so.*
+
 %files -n %{dev32name}
 %{_prefix}/lib/libasprintf.so
 %{_prefix}/lib/libgettextlib.so
 %{_prefix}/lib/libgettextpo.so
 %{_prefix}/lib/libgettextsrc.so
 %{_prefix}/lib/libintl.so
+%{_prefix}/lib/libtextstyle.so
 %endif
