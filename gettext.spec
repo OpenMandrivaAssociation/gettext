@@ -82,6 +82,8 @@ BuildRequires:	locales-extra-charsets
 %if %{with compat32}
 BuildRequires:	devel(libunistring)
 BuildRequires:	devel(libncursesw)
+BuildRequires:	devel(libglib-2.0)
+BuildRequires:	devel(libxml2)
 BuildRequires:	libc6
 %endif
 %if %with check
