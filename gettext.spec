@@ -307,7 +307,7 @@ Emacs editor integration for gettext
 # indicate this is done because the libtextstyle authors do not want
 # applications using their code to suffer startup delays due to the
 # relocations in the two libraries.  This is not a sufficient reason for us.
-rm -rf libtextstyle/lib/{glib,libxml}
+#rm -rf libtextstyle/lib/{glib,libxml}
 for l in LIBGLIB LIBXML; do
     sed -i -e "s,\(gl_$l(\[\).*\(\])\),\1no\2,g" $(grep -rl -e "gl_$l(\[.*\])")
 done
