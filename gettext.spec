@@ -19,7 +19,6 @@
 %define libasprintf %mklibname asprintf
 %define libgettextpo %mklibname gettextpo
 %define libgettextmisc %mklibname gettextmisc
-%define libtextstyle %mklibname textstyle
 %define devname %mklibname gettext -d
 %define oldlib32intl %mklib32name intl %{intl_major}
 %define oldlib32asprintf %mklib32name asprintf %{major}
@@ -29,7 +28,6 @@
 %define lib32asprintf %mklib32name asprintf
 %define lib32gettextpo %mklib32name gettextpo
 %define lib32gettextmisc %mklib32name gettextmisc
-%define lib32textstyle %mklib32name textstyle
 %define dev32name %mklib32name gettext -d
 %define _disable_rebuild_configure 1
 
@@ -46,19 +44,19 @@
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
 Version:	0.22.3
-Release:	2
+Release:	3
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
 Source0:	http://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.xz
 Source2:	po-mode-init.el
 Source100:	%{name}.rpmlintrc
-# KDE example comes from 2003, it's really useless now
-Patch0:		gettext-0.19.1-drop-kde-example.patch
-# (tpg) Mageia patches
 Patch1:		gettext-0.20.1-unescaped-left-brace.patch
 Patch2:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
 Patch3:		gettext-0.22.3-clang.patch
+
+# Arch Linux patches
+Patch4:		https://gitlab.archlinux.org/archlinux/packaging/packages/gettext/-/raw/main/gettext-0.22-disable-libtextstyle.patch
 
 # (tpg) Fedora patches
 Patch5:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-covscan.patch
@@ -100,7 +98,6 @@ BuildRequires:	mono
 %if %with java
 BuildRequires:	jdk-current
 %endif
-Provides:	bundled(libcroco) = 0.6.13
 Requires:	%{name}-base = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
 %if %{with emacs}
@@ -163,15 +160,6 @@ License:	LGPL
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
-%package -n %{libtextstyle}
-Summary:	The textstyle library needed by %{name} utilities
-Group:		System/Libraries
-License:	LGPL
-
-%description -n %{libtextstyle}
-This package the libtextstyle library used by %{name} utilities,
-and are not very widely used outside %{name}.
-
 %if %{with compat32}
 %package -n %{lib32intl}
 Summary:	Basic libintl library for internationalization (32-bit)
@@ -212,15 +200,6 @@ License:	LGPL
 This package contains all other libraries used by %{name} utilities,
 and are not very widely used outside %{name}.
 
-%package -n %{lib32textstyle}
-Summary:	Textstyle library needed by %{name} utilities (32-bit)
-Group:		System/Libraries
-License:	LGPL
-
-%description -n %{lib32textstyle}
-This package contains the textstyle library used by %{name} utilities,
-and are not very widely used outside %{name}.
-
 %package -n %{dev32name}
 Summary:	Development files for %{name} (32-bit)
 Group:		Development/C
@@ -230,7 +209,6 @@ Requires:	%{lib32gettextpo} = %{EVRD}
 Requires:	%{lib32asprintf} = %{EVRD}
 Requires:	%{lib32gettextmisc} = %{EVRD}
 Requires:	%{lib32intl} = %{EVRD}
-Requires:	%{lib32textstyle} = %{EVRD}
 
 %description -n %{dev32name}
 This package contains all development related files necessary for
@@ -248,7 +226,6 @@ Requires:	%{libgettextpo} = %{EVRD}
 Requires:	%{libasprintf} = %{EVRD}
 Requires:	%{libgettextmisc} = %{EVRD}
 Requires:	%{libintl} = %{EVRD}
-Requires:	%{libtextstyle} = %{EVRD}
 # (tpg) autopoint requires cmp
 Requires:	diffutils
 %rename		%{name}-devel
@@ -307,7 +284,7 @@ Emacs editor integration for gettext
 # indicate this is done because the libtextstyle authors do not want
 # applications using their code to suffer startup delays due to the
 # relocations in the two libraries.  This is not a sufficient reason for us.
-#rm -rf libtextstyle/lib/{glib,libxml}
+rm -rf libtextstyle/lib/{glib,libxml}
 for l in LIBGLIB LIBXML; do
     sed -i -e "s,\(gl_$l(\[\).*\(\])\),\1no\2,g" $(grep -rl -e "gl_$l(\[.*\])")
 done
@@ -323,7 +300,7 @@ export CONFIGURE_TOP=$(pwd)
 %if %{with compat32}
 mkdir build32
 cd build32
-%configure32 --with-included-libcroco --with-included-glib --with-included-libxml
+%configure32 --without-included-glib --without-included-libxml
 cd ..
 %endif
 
@@ -501,12 +478,8 @@ EOF
 %{_libdir}/libgettextlib-*.so
 %{_libdir}/libgettextsrc-*.so
 
-%files -n %{libtextstyle}
-%{_libdir}/libtextstyle.so*
-
 %files -n %{devname}
 %doc gettext-runtime/man/*.3.html examples htmldoc
-%doc %{_docdir}/libtextstyle
 %{_bindir}/autopoint
 %{_bindir}/gettextize
 %{_datadir}/%{name}/ABOUT-NLS
@@ -524,10 +497,8 @@ EOF
 %{_libdir}/libgettextpo.so
 %{_libdir}/libgettextsrc.so
 %{_libdir}/libintl.so
-%{_libdir}/libtextstyle.so
 %doc %{_mandir}/man1/autopoint.*
 %doc %{_mandir}/man3/*
-%doc %{_infodir}/libtextstyle.info*
 
 %if %{with java}
 %files java
@@ -557,14 +528,10 @@ EOF
 %{_prefix}/lib/libgettextlib-*.so
 %{_prefix}/lib/libgettextsrc-*.so
 
-%files -n %{lib32textstyle}
-%{_prefix}/lib/libtextstyle.so.*
-
 %files -n %{dev32name}
 %{_prefix}/lib/libasprintf.so
 %{_prefix}/lib/libgettextlib.so
 %{_prefix}/lib/libgettextpo.so
 %{_prefix}/lib/libgettextsrc.so
 %{_prefix}/lib/libintl.so
-%{_prefix}/lib/libtextstyle.so
 %endif
