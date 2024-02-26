@@ -43,8 +43,8 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.22.3
-Release:	3
+Version:	0.22.5
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		http://www.gnu.org/software/gettext/
@@ -74,6 +74,7 @@ BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	texlive-dvips.bin
+BuildRequires:	slibtool
 # Needed to make sure gettext realizes we have
 # a working iconv()
 BuildRequires:	locales-extra-charsets
@@ -330,23 +331,16 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 	--disable-java \
 %endif
 
-# Eliminate hardcoded rpaths; workaround libtool reordering -Wl,--as-needed
-# after all the libraries.
-sed -e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
-    -e 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' \
-    -e 's|CC=.g..|& -Wl,--as-needed|' \
-    -i $(find . -name libtool)
-
 %build
 %if %with java
 . %{_sysconfdir}/profile.d/90java.sh
 %endif
 
 %if %{with compat32}
-%make_build -C build32
+%make_build -C build32 LIBTOOL=slibtool
 %endif
 
-%make_build -C build
+%make_build -C build LIBTOOL=slibtool
 
 %if %{with check}
 %check
@@ -355,13 +349,13 @@ LC_ALL=C make check
 
 %install
 %if %{with compat32}
-%make_install -C build32
+%make_install -C build32 LIBTOOL=slibtool
 # We get 64-bit versions of the same tools in
 # %{_libdir}/gettext -- no need for duplication
 rm -rf %{buildroot}%{_prefix}/lib/gettext
 rm -rf %{buildroot}%{_prefix}/lib/GNU.Gettext.dll
 %endif
-%make_install -C build
+%make_install -C build LIBTOOL=slibtool
 
 # remove unwanted files
 rm -f %{buildroot}%{_includedir}/libintl.h \
