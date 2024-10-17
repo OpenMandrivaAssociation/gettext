@@ -47,7 +47,7 @@ Version:	0.22.5
 Release:	2
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
-Url:		http://www.gnu.org/software/gettext/
+Url:		https://www.gnu.org/software/gettext/
 Source0:	http://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.xz
 Source2:	po-mode-init.el
 Source100:	%{name}.rpmlintrc
