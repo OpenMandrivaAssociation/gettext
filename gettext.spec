@@ -2,7 +2,7 @@
 %ifarch %{x86_64}
 %bcond_without compat32
 %endif
-
+%global optflags %{optflags} -Wno-incompatible-function-pointer-types
 # Workaround for libtool relink bug
 %if %{cross_compiling}
 %define prefer_gcc 1
