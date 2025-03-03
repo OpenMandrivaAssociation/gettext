@@ -56,7 +56,7 @@ Patch2:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
 #Patch3:		gettext-0.22.3-clang.patch
 
 # Arch Linux patches
-Patch4:		https://gitlab.archlinux.org/archlinux/packaging/packages/gettext/-/raw/main/gettext-0.22-disable-libtextstyle.patch
+#Patch4:		https://gitlab.archlinux.org/archlinux/packaging/packages/gettext/-/raw/main/gettext-0.22-disable-libtextstyle.patch
 
 # (tpg) Fedora patches
 Patch5:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-covscan.patch
