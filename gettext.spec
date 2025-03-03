@@ -53,7 +53,7 @@ Source2:	po-mode-init.el
 Source100:	%{name}.rpmlintrc
 Patch1:		gettext-0.20.1-unescaped-left-brace.patch
 Patch2:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
-Patch3:		gettext-0.22.3-clang.patch
+#Patch3:		gettext-0.22.3-clang.patch
 
 # Arch Linux patches
 Patch4:		https://gitlab.archlinux.org/archlinux/packaging/packages/gettext/-/raw/main/gettext-0.22-disable-libtextstyle.patch
