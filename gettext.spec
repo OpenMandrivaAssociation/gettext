@@ -48,7 +48,7 @@ Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		https://www.gnu.org/software/gettext/
-Source0:	http://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.xz
+Source0:	http://ftp.gnu.org/pub/gnu/%{name}/%{name}-%{version}.tar.lz
 Source2:	po-mode-init.el
 Source100:	%{name}.rpmlintrc
 Patch1:		gettext-0.20.1-unescaped-left-brace.patch
