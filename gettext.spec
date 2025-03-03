@@ -43,8 +43,8 @@
 
 Summary:	GNU libraries and utilities for producing multi-lingual messages
 Name:		gettext
-Version:	0.22.5
-Release:	2
+Version:	0.24
+Release:	1
 License:	GPLv3+ and LGPLv2+
 Group:		System/Internationalization
 Url:		https://www.gnu.org/software/gettext/
@@ -65,6 +65,7 @@ BuildRequires:	wget
 BuildRequires:	bison
 BuildRequires:	chrpath
 BuildRequires:	flex
+BuildRequires:	lzip
 BuildRequires:	texinfo
 BuildRequires:	pkgconfig(libacl)
 BuildRequires:	gomp-devel
