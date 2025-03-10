@@ -1,5 +1,5 @@
 # gettext is used by wine and some of its dependencies
-%ifarch %{x86_64}
+%ifarch x86_64
 %bcond_without compat32
 %endif
 %global optflags %{optflags} -Wno-incompatible-function-pointer-types
@@ -30,6 +30,8 @@
 %define lib32gettextmisc %mklib32name gettextmisc
 %define dev32name %mklib32name gettext -d
 %define _disable_rebuild_configure 1
+%define libtextstyle %mklibname textstyle
+%define devtextstyle %mklibname -d textstyle
 
 # (tpg) optimize it a bit
 %ifnarch %{riscv}
@@ -69,7 +71,6 @@ BuildRequires:	lzip
 BuildRequires:	texinfo
 BuildRequires:	pkgconfig(libacl)
 BuildRequires:	gomp-devel
-BuildRequires:	gettext-devel
 BuildRequires:	pkgconfig(libunistring)
 BuildRequires:	pkgconfig(ncursesw)
 BuildRequires:	pkgconfig(libxml-2.0)
@@ -286,12 +287,16 @@ Emacs editor integration for gettext
 # indicate this is done because the libtextstyle authors do not want
 # applications using their code to suffer startup delays due to the
 # relocations in the two libraries.  This is not a sufficient reason for us.
-rm -rf libtextstyle/lib/{glib,libxml}
-for l in LIBGLIB LIBXML; do
-    sed -i -e "s,\(gl_$l(\[\).*\(\])\),\1no\2,g" $(grep -rl -e "gl_$l(\[.*\])")
-done
+#rm -rf libtextstyle/lib/{glib,libxml}
+#for l in LIBGLIB LIBXML; do
+#    sed -i -e "s,\(gl_$l(\[\).*\(\])\),\1no\2,g" $(grep -rl -e "gl_$l(\[.*\])")
+#done
+sed -e 's/\(gl_cv_libxml_force_included=\)yes/\1no/' \
+    -i libtextstyle/configure
 
-autoreconf -fi
+export LIBTOOL=slibtool
+slibtoolize
+./autogen.sh --skip-gnulib
 
 export CONFIGURE_TOP=$(pwd)
 
@@ -336,6 +341,12 @@ CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 %if %with java
 . %{_sysconfdir}/profile.d/90java.sh
 %endif
+
+# gettext has become a bit of a mess, with multiple copies of gnulib
+# that end up putting -I on each other, resulting in
+# #include_next <stdlib.h> including yet another copy of gnulib's
+# version when it is meant to include the system header
+#find . -name stdlib.in.h |xargs sed -i -e 's,@INCLUDE_NEXT@ @NEXT_STDLIB_H@,include "/usr/include/stdlib.h",'
 
 %if %{with compat32}
 %make_build -C build32 LIBTOOL=slibtool
@@ -425,18 +436,20 @@ EOF
 %{_bindir}/recode-sr-latin
 %{_bindir}/xgettext
 %dir %{_datadir}/gettext
+%{_datadir}/gettext/disclaim-translations.txt
+%{_datadir}/gettext/schema
 %{_datadir}/%{name}/msgunfmt.tcl
 %{_datadir}/%{name}/projects
 %{_datadir}/%{name}/javaversion.class
 %{_datadir}/%{name}/styles
 %dir %{_datadir}/%{name}-%{version}
 %{_datadir}/%{name}-%{version}/its
-#dir %{_libdir}/%{name}
-#{_libdir}/%{name}/cldr-plurals
-#{_libdir}/%{name}/hostname
-#{_libdir}/%{name}/project-id
-#{_libdir}/%{name}/urlget
-#{_libdir}/%{name}/user-email
+%dir %{_libexecdir}/%{name}
+%{_libexecdir}/%{name}/cldr-plurals
+%{_libexecdir}/%{name}/hostname
+%{_libexecdir}/%{name}/project-id
+%{_libexecdir}/%{name}/urlget
+%{_libexecdir}/%{name}/user-email
 %if %{with java}
 %exclude %{_libdir}/%{name}/gnu.gettext.*
 %endif
@@ -484,6 +497,7 @@ EOF
 %{_datadir}/%{name}/po
 %{_datadir}/aclocal/*
 %{_includedir}/*
+%exclude %{_includedir}/textstyle.h
 %doc %{_infodir}/autosprintf*
 # "lib*.so" cannot be used (it should be 'lib[^\.]*\.so' regexp in fact
 # but using regexp is not possible here; so we list all files manually
@@ -530,3 +544,33 @@ EOF
 %{_prefix}/lib/libgettextsrc.so
 %{_prefix}/lib/libintl.so
 %endif
+
+%package -n %{libtextstyle}
+Summary: TextStyle library
+Group: System/Libraries
+
+%description -n %{libtextstyle}
+GNU libtextstyle provides an easy way to add styling to programs that produce
+output to a console or terminal emulator window. It does this in a way that
+allows the end user to customize the styling using the industry standard,
+namely Cascading Style Sheets (CSS).
+
+%package -n %{devtextstyle}
+Summary: TextStyle library
+Group: Development/Libraries
+Requires: %{libtextstyle} = %{EVRD}
+
+%description -n %{devtextstyle}
+GNU libtextstyle provides an easy way to add styling to programs that produce
+output to a console or terminal emulator window. It does this in a way that
+allows the end user to customize the styling using the industry standard,
+namely Cascading Style Sheets (CSS).
+
+%files -n %{libtextstyle}
+%{_libdir}/libtextstyle.so.0*
+
+%files -n %{devtextstyle}
+%{_libdir}/libtextstyle.so
+%{_infodir}/libtextstyle.info*
+%{_includedir}/textstyle.h
+%doc %{_docdir}/libtextstyle
