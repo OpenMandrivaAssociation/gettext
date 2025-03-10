@@ -431,12 +431,12 @@ EOF
 %{_datadir}/%{name}/styles
 %dir %{_datadir}/%{name}-%{version}
 %{_datadir}/%{name}-%{version}/its
-%dir %{_libdir}/%{name}
-%{_libdir}/%{name}/cldr-plurals
-%{_libdir}/%{name}/hostname
-%{_libdir}/%{name}/project-id
-%{_libdir}/%{name}/urlget
-%{_libdir}/%{name}/user-email
+#dir %{_libdir}/%{name}
+#{_libdir}/%{name}/cldr-plurals
+#{_libdir}/%{name}/hostname
+#{_libdir}/%{name}/project-id
+#{_libdir}/%{name}/urlget
+#{_libdir}/%{name}/user-email
 %if %{with java}
 %exclude %{_libdir}/%{name}/gnu.gettext.*
 %endif
