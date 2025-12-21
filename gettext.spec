@@ -65,6 +65,10 @@ Patch2:		0001-Backport-libcroco-upstream-merge-request-parser-limi.patch
 # (tpg) Fedora patches
 Patch5:		https://src.fedoraproject.org/rpms/gettext/raw/rawhide/f/gettext-0.21.1-covscan.patch
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	make
 BuildRequires:	wget
 BuildRequires:	bison
 BuildRequires:	chrpath
